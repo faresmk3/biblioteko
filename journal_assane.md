@@ -3,62 +3,31 @@
 ## Informations générales
 - **Nom :** Assane Kane
 - **Projet :** Projet D
----
-
-### Jour 1 – [22/09]
-- **Objectifs fixés :**
-- **Activités réalisées :**
-- **Problèmes rencontrés :**
-- **Solutions apportées / pistes :**
-- **Temps passé :**
-
-### Jour 2 – [date]
-- **Objectifs fixés :**
-- **Activités réalisées :**
-- **Problèmes rencontrés :**
-- **Solutions apportées / pistes :**
-- **Temps passé :**
-
-### Jour 3 – [date]
-- **Objectifs fixés :**
-- **Activités réalisées :**
-- **Problèmes rencontrés :**
-- **Solutions apportées / pistes :**
-- **Temps passé :**
-
-### Bilan hebdomadaire
-- **Points positifs :**
-- **Difficultés :**
-- **Solutions envisagées :**
+- **Encadrant :** [Nom]
+- **Période :** [Dates]
 
 ---
 
-### Jour 1 – [date]
-- **Objectifs fixés :**
-- **Activités réalisées :**
-- **Problèmes rencontrés :**
-- **Solutions apportées / pistes :**
-- **Temps passé :**
+## Jour 1 – 22/09
 
-### Jour 2 – [date]
-- **Objectifs fixés :**
-- **Activités réalisées :**
-- **Problèmes rencontrés :**
-- **Solutions apportées / pistes :**
-- **Temps passé :**
-
-### Jour 3 – [date]
-- **Objectifs fixés :**
-- **Activités réalisées :**
-- **Problèmes rencontrés :**
-- **Solutions apportées / pistes :**
-- **Temps passé :**
-
-### Bilan hebdomadaire
-- **Points positifs :**
-- **Difficultés :**
-- **Solutions envisagées :**
+| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
+|transformer un pdf d'un livre d'image en du texte et en extraire des informations|premier essai avec les biblitheque python :  pdf2image, pikepdf,PIL, cv2,.., en suite essayer avec l'api gemini  |les images ne sont pas bien decoupées, ni bien rognées|je vais essayer pour la prochaine fois d'ame=éliorer les scripts|4h|
+|                  |                   |                    |                 |             |
 
 ---
 
-*(Répéter les sections Semaine X / Jour X jusqu’à la fin du projet)*
+## Jour 2 – 23/09
+
+| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
+|-----------------|-------------------|--------------------|-----------------|-------------|
+|                  |                   |                    |                 |             |
+
+---
+
+## Jour 3 – 24/09
+
+| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
+|-----------------|-------------------|--------------------|-----------------|-------------|
+|                  |                   |                    |                 |             |
+
+---
