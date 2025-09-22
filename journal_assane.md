@@ -8,12 +8,27 @@
 
 ---
 
-## Jour 1 – 22/09
+<h2>Jour 1 – 22/09</h2>
 
-| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
-|-----------------|-------------------|--------------------|-----------------|-------------|
-
-|transformer un pdf d'un livre d'image en du texte et en extraire des informations|premier essai avec les biblitheque python :  pdf2image, pikepdf,PIL, cv2,.., en suite essayer avec l'api gemini  |les images ne sont pas bien decoupées, ni bien rognées|je vais essayer pour la prochaine fois d'ame=éliorer les scripts|4h|
+<table border="1" cellspacing="0" cellpadding="5">
+  <tr>
+    <th>Objectifs fixés</th>
+    <th>Activités réalisées</th>
+    <th>Problèmes rencontrés</th>
+    <th>Solutions / Pistes</th>
+    <th>Temps passé</th>
+  </tr>
+  <tr>
+    <td>Transformer un PDF d'un livre d'image en texte et en extraire des informations</td>
+    <td>
+      Premier essai avec les bibliothèques Python : pdf2image, pikepdf, PIL, cv2, ...<br>
+      Ensuite essayer avec l'API Gemini
+    </td>
+    <td>Les images ne sont pas bien découpées, ni bien rognées</td>
+    <td>Pour la prochaine fois, améliorer les scripts</td>
+    <td>4h</td>
+  </tr>
+</table>
 
 ---
 
