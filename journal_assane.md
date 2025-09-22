@@ -8,7 +8,7 @@
 
 ---
 
-<h2>Jour 1 – 22/09</h2>
+<h2>Jour  – 22/09</h2>
 
 <table border="1" cellspacing="0" cellpadding="5">
   <tr>
@@ -32,18 +32,24 @@
 
 ---
 
-## Jour 2 – 23/09
+<h2>Jour  –</h2>
 
-| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
-|-----------------|-------------------|--------------------|-----------------|-------------|
-|                  |                   |                    |                 |             |
-
+<table border="1" cellspacing="0" cellpadding="5">
+  <tr>
+    <th>Objectifs fixés</th>
+    <th>Activités réalisées</th>
+    <th>Problèmes rencontrés</th>
+    <th>Solutions / Pistes</th>
+    <th>Temps passé</th>
+  </tr>
+  <tr>
+    <td> </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>4h</td>
+  </tr>
+</table>
 ---
 
-## Jour 3 – 24/09
 
-| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
-|-----------------|-------------------|--------------------|-----------------|-------------|
-|                  |                   |                    |                 |             |
-
----
