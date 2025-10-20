@@ -15,4 +15,4 @@ Le 20 Octobre
 - pour moi la manière la plus simple qui ne nécessite pas beaucoup de temps c'est de faire les choses avec les deux choses suivantes :
 
 1. chiffrement de l'oeuvre with : le nom de l'oeuvre avec le nom+prénom de la personne.
-2. mettre une sorte de watermark basique avec python (il existe des bibliothèques pour ce genre de choses). (forensic watermark) pourrait être une bonne idée (dans l'avenir) pour améliorer la sécurité. donc pour watermark, sur chaque page on peut mettre une sorte de **downloaded book X by Y at Date from biblioteko**.
+2. mettre une sorte de watermark basique avec python (il existe des bibliothèques pour ce genre de choses). (forensic watermark) pourrait être une bonne idée (dans l'avenir) pour améliorer la sécurité. donc pour watermark, sur chaque page on peut mettre une sorte de **downloaded book X by Y at Date from biblioteko**. on peut même pousser cela un peut plus loin en laissant les modérateurs (bibliothécaire) eux donner l'authorisation à la personne?
