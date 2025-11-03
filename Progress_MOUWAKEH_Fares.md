@@ -16,3 +16,8 @@ Le 20 Octobre
 
 1. chiffrement de l'oeuvre with : le nom de l'oeuvre avec le nom+prénom de la personne.
 2. mettre une sorte de watermark basique avec python (il existe des bibliothèques pour ce genre de choses). (forensic watermark) pourrait être une bonne idée (dans l'avenir) pour améliorer la sécurité. donc pour watermark, sur chaque page on peut mettre une sorte de **downloaded book X by Y at Date from biblioteko**. on peut même pousser cela un peut plus loin en laissant les modérateurs (bibliothécaire) eux donner l'authorisation à la personne?
+
+Le 3 Novembre
+
+- on a commencé par utiliser `draw.io` pour définir les choses et avoir un schéma pour commencer voilà le lien : https://drive.google.com/file/d/15zmeYrO9jNQ8QWuu1AjE7ieH8mVVRpMz/view?usp=sharing
+- on a travaillé sur les diagrammes de scénarios, on n'a pas tout les scénarios mais on a inclu ce que l'on avait déjà ce qui était 15 scénarios.
