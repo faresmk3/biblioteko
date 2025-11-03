@@ -32,21 +32,19 @@
 
 ---
 
-<h2>Jour  –</h2>
+<h2>Jour  03/11/2025</h2>
 
 <table border="1" cellspacing="0" cellpadding="5">
   <tr>
-    <th>Objectifs fixés</th>
     <th>Activités réalisées</th>
     <th>Problèmes rencontrés</th>
     <th>Solutions / Pistes</th>
     <th>Temps passé</th>
   </tr>
   <tr>
-    <td> </td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Discussion sur les différentes stratégies pour protéger les oeuvres qui sont sous droit d'auteur, réalistation du gragramme des cas d'utilisation avec drow.io, puis conversion du diagramme vers mermaid,</td>
+    <td>conversion du fichier drow.io vers mermaid</td>
+    <td>fichier mermaid obtenu</td>
     <td>4h</td>
   </tr>
 </table>
