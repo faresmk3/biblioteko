@@ -60,7 +60,7 @@
     <th>Temps passé</th>
   </tr>
   <tr>
-    <td>Enumération des classes avec l'aide des glossaies métier et techniques et aussi le digramme de cas d'utilisation réalisé précédemment, Réalisation du diagramme de classe du pattern STATE pour gérer les différents états et opérations qu'on peut avoir au cours de la modération d'une ouvre. </td>
+    <td>Enumération des classes avec l'aide des glossaies métier et techniques et aussi le digramme de cas d'utilisation réalisé précédemment, Réalisation du diagramme de classe du pattern STATE pour gérer les différents états et opérations qu'on peut avoir au cours de la modération d'une ouvre.Ajout de classes comment ServiceLocation, DroitAuteur pour permetre une meilleur séparation des responsabilités dans le code,  </td>
     <td>Compréhension du Patern State</td>
     <td>Patern state fait</td>
     <td>4h</td>
