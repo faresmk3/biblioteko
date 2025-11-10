@@ -21,3 +21,12 @@ Le 3 Novembre
 
 - on a commencé par utiliser `draw.io` pour définir les choses et avoir un schéma pour commencer voilà le lien : https://drive.google.com/file/d/15zmeYrO9jNQ8QWuu1AjE7ieH8mVVRpMz/view?usp=sharing
 - on a travaillé sur les diagrammes de scénarios, on n'a pas tout les scénarios mais on a inclu ce que l'on avait déjà ce qui était 15 scénarios.
+
+Le 10 Novembre
+
+- on a commencé à faire les diagrammes de classes. pour cela on a choisi finalement d'aller avec le Design pattern `State` pour les oeuvre afin de décrire l'état dans lequel l'oeuvre est. car chaque oeuvre passe par plusieurs états lorsqu'un utilisateur veut soumettre un livre. Le design pattern `State` a été choisi afin de faciliter l'implémentation des différents états et faciliter la modification ou l'ajout d'autres états dans l'avenir.
+  les états que l'on a eu à la fin :
+- soumise
+- en train de traitement
+- acceptée
+- refusée
