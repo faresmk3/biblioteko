@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant Membre
     participant Application
