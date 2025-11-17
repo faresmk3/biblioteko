@@ -30,3 +30,21 @@ Le 10 Novembre
 - en train de traitement
 - acceptée
 - refusée
+
+Le 17 Novembre:
+
+- on a repris le travail sur les diagrammes de classes. on a implémenté le design pattern `State` pour l'état de l'oeuvre au niveau de la modératin ainsi que l'état d'une demande de changement de rôle (passer d'un utilisateur lambda à un bibliothécaire par exemple) car ces deux derniers ils ont un état similaire au niveau du traitement donc on a apperçu que cela est logique à implémenter comme cela. pour les rôles cela facilite l'implémentation et le passage aux autres rôles si jamais ajoutés dans l'avenir.
+- On passe au `Service Layer` dans cette séance: `qui fait l'action de coordonner la vérification des droits, la modification de l'œuvre et l'enregistrement dans Git ?
+
+Si vous mettez tout cela dans le contrôleur Web (Pyramid), votre code devient dépendant du framework Web. Si vous le mettez dans la classe Oeuvre, votre objet métier devient dépendant de Git (ce qui est une mauvaise pratique).
+
+Le Service Layer (ServiceOeuvre) sert de tampon et garantit la Modularité.
+
+Ses responsabilités exactes :
+Orchestration : Il ne fait pas le travail métier "dur" (c'est l'objet Oeuvre qui change son propre état via le Pattern State), mais il enchaîne les étapes.
+
+Sécurité (RBAC) Role-Based Access Control : C'est le point d'entrée unique pour vérifier : "Est-ce que cet utilisateur a la permission peut_moderer ?" avant de lancer l'action.
+
+Transaction & Persistance : C'est lui qui dit à la couche technique : "Maintenant que l'œuvre est validée, déplace le fichier dans le dossier fond_commun du dépôt Git".
+
+Abstraction : Il permet de changer l'interface (passer de Pyramid à une ligne de commande comme demandé dans le sujet) sans changer le code métier. La ligne de commande appellera le même ServiceOeuvre que le site web.`
