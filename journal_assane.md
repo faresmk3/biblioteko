@@ -82,7 +82,7 @@
     <td>
       mise à jour du diagramme de classe en intétégrand le concept de Service Layer pour mieux séparer les responsabilités, entre la location, le dépôt d'oeuvres, la modération, réalisation des digramees de séquence déposer une oeuvre, et modérer une oeuvre.
     </td></td>
-    <td>Patern state fait</td>
+    <td>Patern Service Layer fait</td>
     <td>4h</td>
   </tr>
 </table>
