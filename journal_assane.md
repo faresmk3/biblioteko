@@ -69,3 +69,23 @@
 ---
 
 
+<h2>Jour  17/11/2025</h2>
+
+<table border="1" cellspacing="0" cellpadding="5">
+  <tr>
+    <th>Activités réalisées</th>
+    <th>Problèmes rencontrés</th>
+    <th>Solutions / Pistes</th>
+    <th>Temps passé</th>
+  </tr>
+  <tr>
+    <td>
+      mise à jour du diagramme de classe en intétégrand le concept de Service Layer pour mieux séparer les responsabilités, entre la location, le dépôt d'oeuvres, la modération, réalisation des digramees de séquence déposer une oeuvre, et modérer une oeuvre.
+    </td></td>
+    <td>Patern state fait</td>
+    <td>4h</td>
+  </tr>
+</table>
+---
+
+
