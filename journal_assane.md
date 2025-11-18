@@ -81,6 +81,7 @@
   <tr>
     <td>
       mise à jour du diagramme de classe en intétégrand le concept de Service Layer pour mieux séparer les responsabilités, entre la location, le dépôt d'oeuvres, la modération, réalisation des digramees de séquence déposer une oeuvre, et modérer une oeuvre.
+      les rôles sont gérer maintenant par le concept de RBAC(ROLE BASED ACCESS CONTROL
     </td></td>
     <td>Patern Service Layer fait</td>
     <td>4h</td>
