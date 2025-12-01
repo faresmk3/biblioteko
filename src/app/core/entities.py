@@ -22,6 +22,19 @@ class Oeuvre:
             "etat_classe": self._etat.__class__.__name__, # On sauvegarde le nom de l'état
             "metadata": self.metadata
         }
+        
+    @staticmethod
+    def from_dict(data: dict) -> 'Oeuvre':
+        """Recrée l'objet depuis un dictionnaire JSON"""
+        oeuvre = Oeuvre(
+            id=data["id"], 
+            titre=data["titre"], 
+            auteur_nom=data["auteur_nom"]
+        )
+        oeuvre.metadata = data.get("metadata", {})
+        # Note : L'état devra être restauré par le Repository 
+        # car cela demande d'importer les classes d'états (histoire d'éviter les imports circulaires)
+        return oeuvre
     def set_etat(self, nouvel_etat: EtatOeuvre):
         self._etat = nouvel_etat
 
