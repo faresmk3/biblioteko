@@ -102,8 +102,10 @@
     <td>
       Choix : React est un framework JavaScript moderne basé sur des composants réutilisables, ce qui facilite le développement modulaire et la maintenabilité du code. Il permet de créer des interfaces utilisateurs dynamiques et réactives, indispensables pour une bibliothèque numérique interactive. Ses composants isolés simplifient la réalisation de tests unitaires et d’intégration. Son écosystème et sa large communauté offrent un accès facile à des bibliothèques tierces pour la gestion d’état, les formulaires ou les graphiques. React s’adapte parfaitement aux méthodes Agile, favorisant un développement incrémental et collaboratif. Il s’intègre aisément aux outils de documentation et de CI/CD, garantissant traçabilité et qualité du code. Son architecture modulaire répond aux besoins d’indépendance des fonctionnalités du projet. Enfin, React offre une expérience utilisateur fluide et moderne, en adéquation avec les attentes d’une bibliothèque numérique en ligne.
 
-Réalisation de la fonctionalité d'authentification par rôle avec des interfaces différentes pour chaque rôle.
-      
+Réalisation de la fonctionalité d'authentification par rôle avec des interfaces différentes pour chaque rôle avec un fake_api.
+
+Réalisation de dépôt d'une oeuvre avec un fake_api. 
+      </td>
     </td></td>
     <td>Patern Service Layer fait</td>
     <td>4h</td>
