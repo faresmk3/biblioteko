@@ -12,7 +12,16 @@ class Oeuvre:
         # État initial défini par le constructeur
         self._etat: EtatOeuvre = EtatSoumise()
         self.metadata: dict = {}
-    
+    def to_dict(self) -> dict:
+        """Convertit l'objet en dictionnaire pour le JSON"""
+        return {
+            "id": self.id,
+            "titre": self.titre,
+            "auteur_nom": self.auteur_nom,
+            "date_publication": str(self.date_publication),
+            "etat_classe": self._etat.__class__.__name__, # On sauvegarde le nom de l'état
+            "metadata": self.metadata
+        }
     def set_etat(self, nouvel_etat: EtatOeuvre):
         self._etat = nouvel_etat
 
