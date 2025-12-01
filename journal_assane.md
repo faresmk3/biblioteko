@@ -106,8 +106,8 @@ Réalisation de la fonctionalité d'authentification par rôle avec des interfac
 
 Réalisation de dépôt d'une oeuvre avec un fake_api. 
       </td>
-    </td></td>
-    <td>Patern Service Layer fait</td>
+    </td>Confuiguration du projet pour bien définir les context d'authentification et de rôle</td>
+    <td></td>
     <td>4h</td>
   </tr>
 </table>
