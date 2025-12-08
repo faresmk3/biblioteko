@@ -106,8 +106,28 @@ Réalisation de la fonctionalité d'authentification par rôle avec des interfac
 
 Réalisation de dépôt d'une oeuvre avec un fake_api. 
       </td>
-    </td>Confuiguration du projet pour bien définir les context d'authentification et de rôle</td>
+    <td>Confuiguration du projet pour bien définir les context d'authentification et de rôle</td>
     <td></td>
+    <td>4h</td>
+  </tr>
+</table>
+---
+
+
+
+<h2>Jour  03/11/2025</h2>
+
+<table border="1" cellspacing="0" cellpadding="5">
+  <tr>
+    <th>Activités réalisées</th>
+    <th>Problèmes rencontrés</th>
+    <th>Solutions / Pistes</th>
+    <th>Temps passé</th>
+  </tr>
+  <tr>
+    <td>intégration de bootstrap pour pour les styles, ajout des interfaces pour les focntionnalités numériserOeuvre, VoirMesEmprunts du coté membre, et du coté Bibliothécaire : ajout de l'interface à modérer pour modérer les oeuvres qui sont proposer par les membres, </td>
+    <td>Problème de gestion des routes pour les différentes interfaces</td>
+    <td>En richichement du DashboardLayout.jsx</td>
     <td>4h</td>
   </tr>
 </table>
