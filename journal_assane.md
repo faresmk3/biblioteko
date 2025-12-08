@@ -31,6 +31,18 @@
 </table>
 
 ---
+## Jour A FAIRE – 20/10
+
+| Objectifs fixés | Activités réalisées | Problèmes rencontrés | Solutions / Pistes | Temps passé |
+|-----------------|-------------------|--------------------|-----------------|-------------|
+| respecter les droits d'auteurs                 |   trouver un moyen efficace que les membre ne pourront pas récupérer les oeuvres    |    découper l'euvre en moceau au lieux de tout mettre à la disposition du membre                |                 |             |
+
+- **N'empêche, l'utilisateur pourra faire des captures pour récupérer la totalité de l'oeuvre.**
+- **une idée serait aussi de rendre disponible qu'une partie de l'oeuvre pendant une durée et de le mentinner dans le contrat**
+- **on pouvait aussi rendre disponible l'oeuvre page par page et flouter toute la page et rendre visible les deux lignes les plus proches du curseur, mais cela conduit à une expérience utilisateur très désagréable.**
+- ****
+---
+
 
 <h2>Jour  03/11/2025</h2>
 
