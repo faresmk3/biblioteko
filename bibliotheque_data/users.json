@@ -1,0 +1,29 @@
+{
+    "admin@biblio.com": {
+        "id": "root",
+        "nom": "Administrateur",
+        "email": "admin@biblio.com",
+        "mot_de_passe": "admin123",
+        "roles": [
+            "Bibliothecaire"
+        ]
+    },
+    "amine.tifoun@biblio.com": {
+        "id": "e0c325f8",
+        "nom": "Amine Tifoun",
+        "email": "amine.tifoun@biblio.com",
+        "mot_de_passe": "hard",
+        "roles": [
+            "Membre"
+        ]
+    },
+    "jonas.numas@biblio.com": {
+        "id": "f2e5018f",
+        "nom": "Jonas Numa",
+        "email": "jonas.numas@biblio.com",
+        "mot_de_passe": "123",
+        "roles": [
+            "Membre"
+        ]
+    }
+}

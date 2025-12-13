@@ -19,10 +19,13 @@ class Utilisateur:
     id: str
     nom: str
     email: str
+    # On stocke le mot de passe (en clair pour ce MVP, à hasher en prod)
+    mot_de_passe: str
     roles: List[Role] = field(default_factory=list)
 
     def ajouter_role(self, role: Role):
-        if role not in self.roles:
+        # On évite les doublons de rôles
+        if not any(r.nom == role.nom for r in self.roles):
             self.roles.append(role)
 
     def a_la_permission(self, nom_permission_requise: str) -> bool:
@@ -36,7 +39,28 @@ class Utilisateur:
                 if permission.nom == nom_permission_requise:
                     return True
         return False
+    # --- SERIALIZATION POUR SAUVEGARDE JSON ---
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "nom": self.nom,
+            "email": self.email,
+            "mot_de_passe": self.mot_de_passe,
+            # On ne sauvegarde que le nom des rôles
+            "roles": [r.nom for r in self.roles]
+        }
 
+    @staticmethod
+    def from_dict(data: dict) -> 'Utilisateur':
+        u = Utilisateur(
+            id=data["id"],
+            nom=data["nom"],
+            email=data["email"],
+            mot_de_passe=data.get("mot_de_passe", "")
+        )
+        # La réhydratation des rôles se fera via le Repository ou le Service
+        # car RoleFactory est dans un autre module (éviter import circulaire)
+        return u
     def __repr__(self):
         roles_str = ", ".join([r.nom for r in self.roles])
         return f"<Utilisateur {self.nom} (Rôles: {roles_str})>"

@@ -1,3 +1,4 @@
+from core.auth import Role, Permission
 class RoleFactory:
     @staticmethod
     def get_role_membre() -> Role:
