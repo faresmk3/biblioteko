@@ -2,45 +2,106 @@
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <title>Culture Diffusion</title>
+    <title>Espace Modération - Culture Diffusion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container py-4">
-    <h1>Espace Modération</h1>
+<body class="container py-5 bg-light">
     
-    <div style="color: red;" 
-         tal:condition="error" 
-         tal:content="error">Erreur</div>
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <h1 class="h3 text-primary">🛡️ Espace Modération</h1>
+            <p class="text-muted mb-0">Validation, enrichissement et gestion des droits</p>
+        </div>
+        <a href="/" class="btn btn-outline-secondary">Retour à l'accueil</a>
+    </div>
 
-    <ul tal:condition="not: error">
-<li tal:repeat="oeuvre oeuvres" class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <strong tal:content="oeuvre.titre">Titre</strong> 
-                par <span tal:content="oeuvre.auteur_nom">Auteur</span>
-                <br>
-                <small class="text-muted">ID: <span tal:content="oeuvre.id">123</span></small>
-            </div>
+    <div class="alert alert-danger shadow-sm" tal:condition="error" tal:content="error"></div>
+
+    <div class="card shadow-sm border-0" tal:condition="not: error">
+        <div class="card-header bg-white">
+            <h5 class="mb-0 text-secondary">Œuvres en attente de traitement</h5>
+        </div>
+        
+        <ul class="list-group list-group-flush">
+            <li tal:repeat="oeuvre oeuvres" class="list-group-item p-4">
+                <div class="row g-4">
+                    
+                    <div class="col-md-3 text-center border-end">
+                        <div class="mb-3">
+                            <span class="badge bg-secondary mb-2">ID: <span tal:content="oeuvre.id">123</span></span>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a tal:attributes="href string:/data/a_moderer/${oeuvre.id}.pdf" 
+                               target="_blank" 
+                               class="btn btn-outline-primary btn-sm">
+                               👁️ Voir le PDF
+                            </a>
+                            
+                            <a tal:attributes="href string:/download_md/${oeuvre.id}" 
+                               class="btn btn-outline-dark btn-sm">
+                               ⬇️ Télécharger Markdown
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <form action="/valider_form" method="post">
+                            <input type="hidden" name="id" tal:attributes="value oeuvre.id">
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Titre de l'œuvre</label>
+                                    <input type="text" name="titre" class="form-control" 
+                                           tal:attributes="value oeuvre.titre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Auteur</label>
+                                    <input type="text" name="auteur" class="form-control" 
+                                           tal:attributes="value oeuvre.auteur_nom" required>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-end">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Statut Juridique</label>
+                                    <select name="type_droit" class="form-select">
+                                        <option value="prive">🔒 Sous Droits (Séquestre - Emprunt)</option>
+                                        <option value="public">🌍 Domaine Public (Accès Libre)</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 d-flex justify-content-end gap-2 mt-3 mt-md-0">
+                                    
+                                    <a tal:attributes="href string:/rejeter/${oeuvre.id}" 
+                                       class="btn btn-danger"
+                                       onclick="return confirm('Attention : Cette action est irréversible. Rejeter l\'œuvre ?');">
+                                       ❌ Rejeter
+                                    </a>
+
+                                    <button type="submit" class="btn btn-success">
+                                        ✅ Valider & Publier
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </li>
             
-            <div>
-                <a tal:attributes="href string:/data/a_moderer/${oeuvre.id}.pdf" 
-                   target="_blank" 
-                   class="btn btn-sm btn-info me-2">
-                   👁️ Voir PDF
-                </a>
+            <li tal:condition="not: oeuvres" class="list-group-item text-center py-5">
+                <div class="text-muted">
+                    <p class="fs-1 mb-2">🎉</p>
+                    <p class="mb-0">Aucune œuvre à modérer pour le moment.</p>
+                    <small>Bon travail !</small>
+                </div>
+            </li>
+        </ul>
+    </div>
 
-                <a tal:attributes="href string:/valider/${oeuvre.id}?user=alice"
-                   class="btn btn-sm btn-success">
-                   ✅ Valider
-                </a>
-                <a tal:attributes="href string:/rejeter/${oeuvre.id}?user=alice"
-                   class="btn btn-sm btn-danger"
-                   onclick="return confirm('Êtes-vous sûr de vouloir rejeter cette œuvre ?');">
-                   ❌ Rejeter
-                </a>
-            </div>
-        </li>
-    </ul>
-    
-    <p tal:condition="not: oeuvres">Aucune œuvre à modérer.</p>
+    <footer class="mt-5 text-center text-muted small">
+        &copy; 2024 Culture Diffusion - Interface Bibliothécaire
+    </footer>
+
 </body>
 </html>

@@ -3,6 +3,8 @@
     "titre": "Les misérables",
     "auteur_nom": "Android Studio",
     "date_publication": "2025-12-08",
-    "etat_classe": "EtatSoumise",
+    "etat_classe": "EtatRefusee",
+    "contenu_markdown": "",
+    "est_domaine_public": false,
     "metadata": {}
 }

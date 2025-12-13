@@ -2,3 +2,5 @@ pyramid
 pyramid_chameleon
 waitress  # Serveur de production WSGI (plus robuste que wsgiref)
 pytest    # Pour les tests unitaires
+google-generativeai
+python-dotenv

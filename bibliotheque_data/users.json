@@ -25,5 +25,14 @@
         "roles": [
             "Membre"
         ]
+    },
+    "f@biblio.com": {
+        "id": "e38986de",
+        "nom": "ff",
+        "email": "f@biblio.com",
+        "mot_de_passe": "f",
+        "roles": [
+            "Membre"
+        ]
     }
 }

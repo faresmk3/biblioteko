@@ -2,6 +2,12 @@ from abc import ABC, abstractmethod
 from typing import List
 from core.entities import Oeuvre
 
+class OCRProvider(ABC):
+    """Interface pour les services d'IA (Gemini, Pixtral)"""
+    @abstractmethod
+    def extraire_texte(self, fichier_binaire) -> str:
+        pass
+
 class OeuvreRepository(ABC):
     """
     Interface (Port) que l'infrastructure devra respecter.

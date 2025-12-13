@@ -1,91 +1,111 @@
-# src/app/services/service_oeuvre.py
 from typing import List
+import uuid
+import io
+
 from core.entities import Oeuvre
 from core.auth import Utilisateur
 from core.ports import OeuvreRepository
-import uuid
+from infrastructure.ai_adapters import GeminiAdapter  # Import real adapter
 
 class ServiceOeuvre:
     def __init__(self, repo: OeuvreRepository):
         self.repo = repo
+        # Initialize AI Adapter (will load API Key)
+        try:
+            self.ocr_provider = GeminiAdapter()
+            print("✅ AI Adapter (Gemini) loaded.")
+        except Exception as e:
+            print(f"⚠️ Warning: AI Adapter failed to load ({e}). OCR will be disabled.")
+            self.ocr_provider = None
 
-    # CORRECTION ICI : Ajout du paramètre 'fichier_stream=None'
     def soumettre_oeuvre(self, membre: Utilisateur, titre: str, auteur: str, fichier_stream=None) -> Oeuvre:
-        print(f"--- Service: Tentative de soumission par {membre.nom} ---")
-        
-        # 1. Vérification Sécurité (RBAC)
         if not membre.a_la_permission("peut_proposer_oeuvre"):
-            raise PermissionError(f"L'utilisateur {membre.nom} n'a pas le droit de soumettre.")
+            raise PermissionError(f"User {membre.nom} cannot submit works.")
 
-        # 2. Création du Domaine
-        # On génère un ID unique court (8 caractères)
         nouvelle_oeuvre = Oeuvre(id=str(uuid.uuid4())[:8], titre=titre, auteur_nom=auteur)
         
-        # 3. Persistance (Infrastructure)
-        # On passe le fichier binaire au repository
-        self.repo.sauvegarder(nouvelle_oeuvre, dossier_cible="a_moderer", fichier_binaire=fichier_stream)
-        
-        print(f"✅ Œuvre '{titre}' soumise avec succès (ID: {nouvelle_oeuvre.id})")
+        # --- AI PROCESS START ---
+        if fichier_stream and self.ocr_provider:
+            print(f"🤖 Sending '{titre}' to Gemini for OCR...")
+            
+            # Read bytes into memory to safely use stream twice (once for AI, once for Disk)
+            if hasattr(fichier_stream, 'seek'): fichier_stream.seek(0)
+            file_bytes = fichier_stream.read()
+            
+            # 1. OCR
+            # Create a bytes stream for the AI
+            try:
+                ai_stream = io.BytesIO(file_bytes)
+                md_text = self.ocr_provider.extraire_texte(ai_stream)
+                nouvelle_oeuvre.contenu_markdown = md_text
+                print("✅ OCR Complete.")
+            except Exception as e:
+                print(f"❌ OCR Failed: {e}")
+                nouvelle_oeuvre.contenu_markdown = "OCR Failed or Unavailable."
+
+            # 2. Reset stream for disk saving
+            # Create a new bytes stream for the repository
+            save_stream = io.BytesIO(file_bytes)
+        else:
+            save_stream = fichier_stream
+        # --- AI PROCESS END ---
+
+        self.repo.sauvegarder(nouvelle_oeuvre, dossier_cible="a_moderer", fichier_binaire=save_stream)
         return nouvelle_oeuvre
 
     def lister_a_moderer(self, demandeur: Utilisateur) -> List[Oeuvre]:
-        # 1. RBAC
         if not demandeur.a_la_permission("peut_moderer_oeuvre"):
-            raise PermissionError("Accès refusé aux œuvres à modérer.")
-            
-        # 2. Infra
+            raise PermissionError("Access denied.")
         ids = self.repo.lister_ids("a_moderer")
         oeuvres = []
         for id_o in ids:
             try:
                 oeuvres.append(self.repo.charger(id_o, "a_moderer"))
-            except FileNotFoundError:
-                continue
-            
+            except FileNotFoundError: continue
         return oeuvres
 
-    def valider_oeuvre(self, bibliothecaire: Utilisateur, id_oeuvre: str):
-        print(f"--- Service: Validation de l'œuvre {id_oeuvre} par {bibliothecaire.nom} ---")
-
-        # 1. RBAC
-        if not bibliothecaire.a_la_permission("peut_moderer_oeuvre"):
-            raise PermissionError("Seuls les bibliothécaires peuvent valider.")
-
-        # 2. Chargement (Infra)
-        oeuvre = self.repo.charger(id_oeuvre, dossier_source="a_moderer")
-
-        # 3. Logique Métier (Domaine / State Pattern)
-        try:
-            oeuvre.traiter()   # State: Soumise -> EnTraitement
-            oeuvre.accepter()  # State: EnTraitement -> Validee
-        except Exception as e:
-            print(f"❌ Erreur métier : {e}")
-            raise e
-
-        # 4. Persistance & Déplacement (Infra)
-        self.repo.deplacer(oeuvre, dossier_source="a_moderer", dossier_dest="fond_commun")
+    def valider_oeuvre(self, bibliothecaire: Utilisateur, id_oeuvre: str, est_domaine_public: bool,
+                        nouveau_titre: str = None, nouveau_auteur: str = None):
         
-        print(f"✅ Œuvre validée et publiée dans le Fond Commun !")
+        if not bibliothecaire.a_la_permission("peut_moderer_oeuvre"):
+            raise PermissionError("Access denied.")
+
+        oeuvre = self.repo.charger(id_oeuvre, dossier_source="a_moderer")
+        
+        # 1. ENRICHMENT (Requirement: "enrichissement des métadonnées")
+        if nouveau_titre: oeuvre.titre = nouveau_titre
+        if nouveau_auteur: oeuvre.auteur_nom = nouveau_auteur
+        
+        # 2. Update Rights
+        oeuvre.est_domaine_public = est_domaine_public
+        
+        # 3. State Transition
+        try:
+            oeuvre.traiter()
+            oeuvre.accepter()
+        except Exception: pass
+
+        # 4. Move
+        dossier_dest = "fond_commun" if est_domaine_public else "sequestre"
+        self.repo.deplacer(oeuvre, dossier_source="a_moderer", dossier_dest=dossier_dest)
+        
+        print(f"✅ Validated: {oeuvre.titre} -> {dossier_dest}")
+
     def rejeter_oeuvre(self, bibliothecaire: Utilisateur, id_oeuvre: str):
-        print(f"--- Service: Rejet de l'œuvre {id_oeuvre} par {bibliothecaire.nom} ---")
-
-        # 1. RBAC
         if not bibliothecaire.a_la_permission("peut_moderer_oeuvre"):
-            raise PermissionError("Seuls les bibliothécaires peuvent rejeter.")
-
-        # 2. Chargement
+            raise PermissionError("Access denied.")
         oeuvre = self.repo.charger(id_oeuvre, dossier_source="a_moderer")
-
-        # 3. Logique Métier (Pattern State)
         try:
-            oeuvre.traiter()   # Soumise -> EnTraitement
-            oeuvre.refuser()   # EnTraitement -> Refusee
-        except Exception as e:
-            print(f"❌ Erreur métier : {e}")
-            raise e
-
-        # 4. Persistance & Archivage
-        # On déplace le fichier hors de la vue "à modérer" vers "archives"
+            oeuvre.traiter()
+            oeuvre.refuser()
+        except Exception: pass
         self.repo.deplacer(oeuvre, dossier_source="a_moderer", dossier_dest="archives")
-        
-        print(f"✅ Œuvre rejetée et archivée.")
+    def lister_publiques(self) -> List[Oeuvre]:
+        """Returns works in 'fond_commun' (Free Access)"""
+        ids = self.repo.lister_ids("fond_commun")
+        return [self.repo.charger(id_o, "fond_commun") for id_o in ids]
+
+    def lister_sequestre(self) -> List[Oeuvre]:
+        """Returns works in 'sequestre' (Available for Loan)"""
+        ids = self.repo.lister_ids("sequestre")
+        return [self.repo.charger(id_o, "sequestre") for id_o in ids]
