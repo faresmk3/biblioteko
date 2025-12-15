@@ -1,0 +1,6 @@
+titre: "histoire-1-10"
+auteur: "Assane KANE"
+fichier: "inconnu.pdf"
+soumis_par: "membre@biblio.com"
+date: "2025-12-15T14:17:51.265580"
+etat: "SOUMISE"
