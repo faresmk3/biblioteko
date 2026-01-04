@@ -1,9 +1,54 @@
+# ============================================
+# FICHIER 1: src/app/domain/modeles.py (VERSION COMPLÈTE)
+# ============================================
+"""
+Modèles métier enrichis avec toutes les fonctionnalités manquantes
+"""
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional, Dict
+from enum import Enum
+import bcrypt
+import secrets
 
 # ============================================================
-# 1. GESTION DES UTILISATEURS & DROITS (RBAC)
+# 1. ENUMS (Classification, Statuts)
+# ============================================================
+
+class CategorieOeuvre(Enum):
+    """Classification des œuvres selon le cahier des charges"""
+    # Livres
+    LIVRE_BD = "BD"
+    LIVRE_ROMAN = "Roman"
+    LIVRE_JEUNESSE = "Jeunesse"
+    LIVRE_TECHNIQUE = "Technique"
+    LIVRE_EDUCATION = "Education"
+    LIVRE_CULTURE = "Culture"
+    LIVRE_SANTE = "Santé"
+    
+    # Musique
+    MUSIQUE_CLASSIQUE = "Classique"
+    MUSIQUE_JAZZ = "Jazz"
+    MUSIQUE_POP = "Pop"
+    MUSIQUE_METAL = "Metal"
+    
+    # Vidéos
+    VIDEO_SF = "SF"
+    VIDEO_HISTOIRE = "Histoire"
+    VIDEO_SERIE = "Série"
+    VIDEO_DOCUMENTAIRE = "Documentaire"
+    
+    # Articles
+    ARTICLE = "Article"
+
+class StatutDroit(Enum):
+    """Statut juridique de l'œuvre"""
+    DOMAINE_PUBLIC = "libre"
+    SOUS_DROITS = "protege"
+    SEQUESTRE = "attente_liberation"
+
+# ============================================================
+# 2. GESTION DES UTILISATEURS & DROITS (RBAC) - AMÉLIORÉ
 # ============================================================
 
 class Permission:
@@ -27,14 +72,33 @@ class Role:
         self.permissions.append(permission)
 
 class Utilisateur:
+    """
+    SÉCURISÉ : Hashing bcrypt + Clé de chiffrement personnelle
+    """
     def __init__(self, nom: str, prenom: str, email: str, mdp: str):
-        # Attention à l'ordre des arguments ici pour correspondre à votre test
         self.nom = nom
         self.prenom = prenom
-        self.email = email # On utilise 'email' pour être cohérent avec le repo
-        self.courriel = email # Alias si besoin
-        self.mdp = mdp
+        self.email = email
+        self.courriel = email  # Alias
+        
+        # 🔐 SÉCURITÉ : Hashing du mot de passe
+        self.mdp_hash = bcrypt.hashpw(mdp.encode('utf-8'), bcrypt.gensalt())
+        
+        # 🔑 Clé de chiffrement unique pour les emprunts
+        self.cle_chiffrement = self._generer_cle_chiffrement()
+        
         self.roles: List[Role] = []
+        self.espace_disque_mb: int = 1000  # Espace dispo en MB
+        self.date_inscription = datetime.now()
+
+    def _generer_cle_chiffrement(self) -> bytes:
+        """Génère une clé Fernet pour chiffrer les emprunts"""
+        from cryptography.fernet import Fernet
+        return Fernet.generate_key()
+
+    def verifier_mdp(self, mdp: str) -> bool:
+        """Vérifie le mot de passe en toute sécurité"""
+        return bcrypt.checkpw(mdp.encode('utf-8'), self.mdp_hash)
 
     def ajouter_role(self, role: Role):
         self.roles.append(role)
@@ -46,12 +110,16 @@ class Utilisateur:
                     return True
         return False
 
+    def a_espace_disque_disponible(self, taille_mb: int = 10) -> bool:
+        """Vérifie si l'utilisateur a assez d'espace disque"""
+        return self.espace_disque_mb >= taille_mb
+
     def __str__(self):
         return f"{self.prenom} {self.nom} ({self.email})"
 
 
 # ============================================================
-# 2. PATTERN STATE (États de l'Oeuvre)
+# 3. PATTERN STATE (États de l'Oeuvre) - INCHANGÉ
 # ============================================================
 
 class EtatOeuvre(ABC):
@@ -92,27 +160,40 @@ class EtatRefusee(EtatOeuvre):
 
 
 # ============================================================
-# 3. DOMAINE MÉTIER : L'ŒUVRE
+# 4. DOMAINE MÉTIER : L'ŒUVRE (ENRICHIE)
 # ============================================================
 
 class Oeuvre:
+    """
+    NOUVELLES FONCTIONNALITÉS :
+    - Classification multi-catégories
+    - Gestion domaine public / sous droits
+    - Métadonnées IA (Gemini, Pixtral)
+    """
     def __init__(self, titre: str, auteur: str, fichier_nom: str, soumis_par: Utilisateur):
         self.id = None
         self.titre = titre
-        self.auteur = auteur          # Le repo attend 'auteur'
-        self.fichier_nom = fichier_nom # Le repo attend 'fichier_nom' (ou mappé vers 'fichier')
+        self.auteur = auteur
+        self.fichier_nom = fichier_nom
         
-        # Gestion de l'email de l'utilisateur
         self.soumis_par_email = soumis_par.email if hasattr(soumis_par, 'email') else str(soumis_par)
-        
         self.date_soumission = datetime.now().isoformat()
         
         # État interne (privé)
         self._etat_actuel: EtatOeuvre = EtatSoumise()
         
+        # 🆕 CLASSIFICATION
+        self.categories: List[CategorieOeuvre] = []
+        
+        # 🆕 STATUT JURIDIQUE
+        self.statut_droit: StatutDroit = StatutDroit.SOUS_DROITS
+        self.date_liberation: Optional[datetime] = None  # Date de passage domaine public
+        
+        # 🆕 RECONNAISSANCE IA
+        self.resultats_ocr: Dict[str, str] = {}  # {"tesseract": "...", "gemini": "...", "pixtral": "..."}
+        
         self.metadonnees: Dict = {}
 
-    # --- La fameuse propriété qui manquait ---
     @property
     def etat(self):
         return self._etat_actuel
@@ -124,18 +205,178 @@ class Oeuvre:
     def set_metadonnee(self, cle: str, valeur: str):
         self.metadonnees[cle] = valeur
 
-    # --- Méthodes Métier ---
+    # --- Méthodes Classification ---
+    
+    def ajouter_categorie(self, categorie: CategorieOeuvre):
+        """Ajoute une catégorie (œuvre peut avoir plusieurs catégories)"""
+        if categorie not in self.categories:
+            self.categories.append(categorie)
+    
+    def est_dans_categorie(self, categorie: CategorieOeuvre) -> bool:
+        return categorie in self.categories
+    
+    # --- Méthodes Juridiques ---
+    
+    def calculer_statut_droit(self):
+        """
+        Détermine si l'œuvre est dans le domaine public
+        Règle : 70 ans après la mort de l'auteur (simplifié ici)
+        """
+        if self.date_liberation and datetime.now() > self.date_liberation:
+            self.statut_droit = StatutDroit.DOMAINE_PUBLIC
+            return True
+        return False
+    
+    def est_libre_de_droits(self) -> bool:
+        return self.statut_droit == StatutDroit.DOMAINE_PUBLIC
+    
+    def placer_en_sequestre(self, date_liberation: datetime):
+        """Place l'œuvre en attente de libération automatique"""
+        self.statut_droit = StatutDroit.SEQUESTRE
+        self.date_liberation = date_liberation
+    
+    # --- Méthodes IA ---
+    
+    def enregistrer_resultat_ocr(self, source_ia: str, texte: str):
+        """Enregistre le résultat d'une reconnaissance IA"""
+        self.resultats_ocr[source_ia] = texte
+    
+    def comparer_qualite_ocr(self) -> Dict[str, float]:
+        """
+        Compare la qualité des différentes OCR
+        Retourne un score basique (nombre de mots / longueur)
+        """
+        scores = {}
+        for source, texte in self.resultats_ocr.items():
+            nb_mots = len(texte.split())
+            longueur = len(texte)
+            scores[source] = {
+                "nb_mots": nb_mots,
+                "longueur": longueur,
+                "score": nb_mots / max(longueur, 1) * 1000  # Score simplifié
+            }
+        return scores
+
+    # --- Méthodes Métier (State) ---
+    
     def traiter(self):
         self._etat_actuel.traiter(self)
 
     def accepter(self):
         self._etat_actuel.accepter(self)
 
-    def valider(self): # Alias pour accepter
+    def valider(self):
         self.accepter()
 
     def refuser(self):
         self._etat_actuel.refuser(self)
 
     def __repr__(self):
-        return f"<Oeuvre '{self.titre}' [{self._etat_actuel.nom}]>"
+        cats = ", ".join([c.value for c in self.categories])
+        return f"<Oeuvre '{self.titre}' [{self._etat_actuel.nom}] ({cats})>"
+
+
+# ============================================================
+# 5. NOUVEAU : GESTION DES EMPRUNTS
+# ============================================================
+
+class Emprunt:
+    """
+    Représente l'emprunt d'une œuvre par un utilisateur
+    FONCTIONNALITÉS :
+    - Durée 14 jours (configurable)
+    - Chiffrement avec clé utilisateur
+    - Détection expiration
+    """
+    def __init__(self, oeuvre: Oeuvre, utilisateur: Utilisateur, duree_jours: int = 14):
+        self.id = f"emprunt_{secrets.token_hex(8)}"
+        self.oeuvre_id = oeuvre.fichier_nom
+        self.oeuvre_titre = oeuvre.titre
+        self.utilisateur_email = utilisateur.email
+        
+        # Dates
+        self.date_debut = datetime.now()
+        self.date_fin = self.date_debut + timedelta(days=duree_jours)
+        self.date_retour: Optional[datetime] = None
+        
+        # Chiffrement
+        self.cle_chiffrement = utilisateur.cle_chiffrement
+        self.fichier_chiffre: Optional[bytes] = None
+        
+        # État
+        self.est_actif = True
+    
+    def est_expire(self) -> bool:
+        """Vérifie si l'emprunt a dépassé la date limite"""
+        return datetime.now() > self.date_fin and self.est_actif
+    
+    def jours_restants(self) -> int:
+        """Calcule le nombre de jours restants (arrondi métier)"""
+        if not self.est_actif:
+            return 0
+
+        maintenant = datetime.now()
+        delta = self.date_fin - maintenant
+
+        # Si encore valide aujourd'hui, on compte le jour en cours
+        jours = delta.days
+        if delta.seconds > 0:
+            jours += 1
+
+        return max(0, jours)
+    
+    def retourner(self):
+        """Marque l'emprunt comme retourné"""
+        self.date_retour = datetime.now()
+        self.est_actif = False
+        print(f"[Emprunt] Retour de '{self.oeuvre_titre}' par {self.utilisateur_email}")
+    
+    def renouveler(self, jours: int = 14):
+        """Prolonge l'emprunt"""
+        if self.est_actif:
+            self.date_fin = self.date_fin + timedelta(days=jours)
+            print(f"[Emprunt] Prolongation de {jours} jours pour '{self.oeuvre_titre}'")
+    
+    def __repr__(self):
+        statut = "ACTIF" if self.est_actif else "TERMINÉ"
+        return f"<Emprunt '{self.oeuvre_titre}' [{statut}] - {self.jours_restants()}j restants>"
+
+
+# ============================================================
+# 6. NOUVEAU : PERMISSIONS SYSTÈME COMPLET
+# ============================================================
+
+class PermissionsSysteme:
+    """Définition de toutes les permissions du système"""
+    
+    # Permissions Modération
+    PEUT_MODERER = Permission("peut_moderer_oeuvre")
+    PEUT_VALIDER = Permission("peut_valider_oeuvre")
+    PEUT_REJETER = Permission("peut_rejeter_oeuvre")
+    
+    # Permissions Emprunts
+    PEUT_EMPRUNTER = Permission("peut_emprunter_oeuvre")
+    PEUT_RENOUVELER = Permission("peut_renouveler_emprunt")
+    
+    # Permissions Admin
+    PEUT_GERER_UTILISATEURS = Permission("peut_gerer_utilisateurs")
+    PEUT_GERER_DIFFUSION = Permission("peut_gerer_diffusion")
+    
+    @classmethod
+    def creer_role_bibliothecaire(cls) -> Role:
+        """Factory pour créer un rôle bibliothécaire complet"""
+        role = Role("Bibliothécaire")
+        role.ajouter_permission(cls.PEUT_MODERER)
+        role.ajouter_permission(cls.PEUT_VALIDER)
+        role.ajouter_permission(cls.PEUT_REJETER)
+        role.ajouter_permission(cls.PEUT_GERER_DIFFUSION)
+        return role
+    
+    @classmethod
+    def creer_role_membre(cls) -> Role:
+        """Factory pour créer un rôle membre standard"""
+        role = Role("Membre")
+        role.ajouter_permission(cls.PEUT_EMPRUNTER)
+        role.ajouter_permission(cls.PEUT_RENOUVELER)
+        return role
+

@@ -26,7 +26,7 @@ else:
 
 # 4. Scénario de Validation
 print("\n--- 3. Validation ---")
-oeuvre.set_infos("Genre", "Roman Historique")
+oeuvre.set_metadonnee("Genre", "Roman Historique")
 oeuvre.accepter() # Doit passer VALIDEE
 print(oeuvre)
 print("Métadonnées:", oeuvre.metadonnees)
