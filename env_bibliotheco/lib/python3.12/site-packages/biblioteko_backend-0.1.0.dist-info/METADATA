@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: biblioteko_backend
+Version: 0.1.0
+Summary: Backend pour CultureDiffusion
+Requires-Dist: pyramid
+Requires-Dist: waitress
+Requires-Dist: gitpython
+Requires-Dist: pyramid_chameleon
+Requires-Dist: pyramid_debugtoolbar
+Dynamic: requires-dist
+Dynamic: summary

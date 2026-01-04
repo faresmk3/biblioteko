@@ -1,0 +1,9 @@
+setup.py
+src/app/__init__.py
+src/app/routes.py
+src/biblioteko_backend.egg-info/PKG-INFO
+src/biblioteko_backend.egg-info/SOURCES.txt
+src/biblioteko_backend.egg-info/dependency_links.txt
+src/biblioteko_backend.egg-info/entry_points.txt
+src/biblioteko_backend.egg-info/requires.txt
+src/biblioteko_backend.egg-info/top_level.txt
