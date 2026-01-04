@@ -1,9 +1,9 @@
 # src/app/__init__.py
 import os
 from pyramid.config import Configurator
-from pyramid.response import Response
-from src.app.infra.repositories import FileSystemGitRepository, RepoUtilisateurs
-from src.app.domain.services import ServiceOeuvre, ServiceEmprunt
+from pyramid.response import Response  # <--- N'oubliez pas cet import !
+from src.app.infra.repositories import FileSystemGitRepository
+from src.app.domain.services import ServiceOeuvre
 
 def main(global_config, **settings):
     """ Fonction principale qui construit l'application WSGI. """
@@ -13,37 +13,15 @@ def main(global_config, **settings):
         config.include('.routes')
         config.scan('.views')
 
-        # 2. Injection de Dépendances (Le Ciment)
+        # 2. Injection de Dépendances
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        data_path = os.path.join(root_dir, 'data') # Dossier pour les données
-        
-        # Assurez-vous que le dossier data existe
-        if not os.path.exists(data_path):
-            os.makedirs(data_path)
-
         print(f"[Pyramid] Démarrage avec stockage dans : {root_dir}")
 
-        # A. Initialisation des Dépôts
-        # FileSystemGitRepository gère les œuvres (selon votre code précédent)
-        repo_oeuvres = FileSystemGitRepository(root_dir) 
-        
-        # RepoUtilisateurs gère les users (JSON) - INDISPENSABLE POUR AUTH
-        repo_users = RepoUtilisateurs(os.path.join(data_path, 'users.json'))
+        repo = FileSystemGitRepository(root_dir)
+        service = ServiceOeuvre(repo)
+        config.registry.service_oeuvre = service
 
-        # B. Initialisation des Services
-        service_oeuvre = ServiceOeuvre(repo_oeuvres)
-        # ServiceEmprunt a besoin des users et des oeuvres
-        service_emprunt = ServiceEmprunt(repo_users, repo_oeuvres)
-
-        # C. Enregistrement dans le registre (pour accès dans les Vues)
-        config.registry.repo_oeuvres = repo_oeuvres
-        config.registry.service_oeuvre = service_oeuvre
-        
-        # AJOUTS CRITIQUES POUR AUTH ET EMPRUNTS :
-        config.registry.depot_utilisateurs = repo_users
-        config.registry.service_emprunt = service_emprunt
-
-        # 3. Gestion du CORS
+        # 3. Gestion du CORS (Correction ici)
         config.add_tween('src.app.cors_tween_factory')
 
     return config.make_wsgi_app()
@@ -58,7 +36,7 @@ def cors_tween_factory(handler, registry):
             response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization'
             return response
 
-        # Sinon, on laisse passer la requête vers votre vue
+        # Sinon, on laisse passer la requête vers votre vue (api_depot, etc.)
         response = handler(request)
         
         # Et on ajoute les headers CORS à la réponse
