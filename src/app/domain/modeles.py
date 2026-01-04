@@ -171,7 +171,7 @@ class Oeuvre:
     - Métadonnées IA (Gemini, Pixtral)
     """
     def __init__(self, titre: str, auteur: str, fichier_nom: str, soumis_par: Utilisateur):
-        self.id = None
+        self.id = f"{titre.replace(' ', '_')}.md"
         self.titre = titre
         self.auteur = auteur
         self.fichier_nom = fichier_nom

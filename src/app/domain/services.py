@@ -177,6 +177,42 @@ class ServiceEmprunt:
             if emp.id == id_emprunt:
                 return emp
         return None
+    
+
+
+    def lister_mes_emprunts(self, utilisateur: Utilisateur) -> List[Emprunt]:
+        """
+        SCÉNARIO : Consulter mes emprunts ACTIFS uniquement
+        
+        Returns:
+            List[Emprunt]: Liste des emprunts actifs de l'utilisateur
+        """
+        tous_emprunts = self.emprunts_actifs.get(utilisateur.email, [])
+        
+        # ✅ CORRECTION : Ne retourner que les emprunts actifs
+        return [e for e in tous_emprunts if e.est_actif]
+    
+    def retourner_oeuvre(self, utilisateur: Utilisateur, id_emprunt: str):
+        """SCÉNARIO : Retourner une œuvre"""
+        emprunt = self._trouver_emprunt(utilisateur.email, id_emprunt)
+        if not emprunt:
+            raise ValueError("Emprunt introuvable.")
+        
+        emprunt.retourner()
+        self.depot.supprimer_emprunt(id_emprunt)
+        
+        # ✅ CORRECTION : Ne pas supprimer de la liste, juste marquer comme inactif
+        # La méthode lister_mes_emprunts filtrera les inactifs
+        
+        return f"Œuvre '{emprunt.oeuvre_titre}' retournée avec succès."
+    
+
+    def recuperer_oeuvre(self, id_oeuvre: str) -> Optional[Oeuvre]:
+        """
+        Alias pour get_oeuvre_by_id
+        Permet de garder une API cohérente entre service et repository
+        """
+        return self.depot.get_oeuvre_by_id(id_oeuvre)
 
 
 class ServiceReconnaissanceIA:

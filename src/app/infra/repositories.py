@@ -1,3 +1,11 @@
+# ============================================
+# FICHIER COMPLET CORRIGÉ
+# ============================================
+
+"""
+Remplacez TOUT le contenu de src/app/infra/repositories.py par ceci :
+"""
+
 # src/app/infra/repositories.py
 import os
 import git
@@ -26,7 +34,6 @@ class FileSystemGitRepository:
     def _serialize_to_markdown(self, oeuvre: Oeuvre) -> str:
         def safe(val): return str(val).replace('"', '\\"')
 
-        #md = "---\n"
         md = f'titre: "{safe(oeuvre.titre)}"\n'
         md += f'auteur: "{safe(oeuvre.auteur)}"\n'
         md += f'fichier: "{safe(oeuvre.fichier_nom)}"\n'
@@ -36,8 +43,6 @@ class FileSystemGitRepository:
         
         for k, v in oeuvre.metadonnees.items():
             md += f'{k}: "{safe(v)}"\n'
-            
-        #md += "---\n\n"
         
         return md
 
@@ -51,11 +56,20 @@ class FileSystemGitRepository:
                 if ":" in line:
                     key, val = line.split(":", 1)
                     data[key.strip()] = val.strip().strip('"')
+        else:
+            # Pas de délimiteurs ---, on parse directement
+            for line in lines:
+                if ":" in line:
+                    key, val = line.split(":", 1)
+                    data[key.strip()] = val.strip().strip('"')
         return data
 
-    # --- Méthodes du Repository ---
+    # ========================================
+    # MÉTHODES PRINCIPALES
+    # ========================================
 
     def sauvegarder(self, oeuvre: Oeuvre):
+        """Sauvegarde une œuvre selon son état"""
         if oeuvre.etat.nom in ["SOUMISE", "EN_TRAITEMENT"]:
             dossier = "a_moderer"
         elif oeuvre.etat.nom == "VALIDEE":
@@ -64,7 +78,6 @@ class FileSystemGitRepository:
             dossier = "archives"
 
         self._ensure_dir(dossier)
-        
         safe_filename = f"{oeuvre.titre.replace(' ', '_')}.md"
         full_path = self._get_path(dossier, safe_filename)
 
@@ -73,14 +86,16 @@ class FileSystemGitRepository:
             f.write(content)
 
         self.repo.index.add([full_path])
-        self.repo.index.commit(f"Maj (MD): {oeuvre.titre} -> {oeuvre.etat.nom}")
-        print(f"[Git] Fichier Markdown sauvegardé : {safe_filename}")
+        self.repo.index.commit(f"Maj: {oeuvre.titre} -> {oeuvre.etat.nom}")
+        print(f"[Git] Sauvegardé : {safe_filename}")
 
     def lister_oeuvres_en_attente(self) -> List[Oeuvre]:
+        """Liste les œuvres à modérer"""
         oeuvres = []
         path = os.path.join(self.root_dir, "data", "a_moderer")
         
-        if not os.path.exists(path): return []
+        if not os.path.exists(path):
+            return []
 
         for filename in os.listdir(path):
             if filename.endswith(".md"):
@@ -88,8 +103,6 @@ class FileSystemGitRepository:
                     with open(os.path.join(path, filename), 'r', encoding='utf-8') as f:
                         data = self._parse_from_markdown(f.read())
                         
-                        # --- CORRECTION ICI ---
-                        # On fournit tous les champs obligatoires (nom, prenom, email, mdp)
                         user_stub = Utilisateur(
                             nom="Inconnu", 
                             prenom="", 
@@ -109,44 +122,162 @@ class FileSystemGitRepository:
         return oeuvres
 
     def get_oeuvre_by_id(self, id_oeuvre: str) -> Optional[Oeuvre]:
-        for dossier in ["a_moderer", "fond_commun", "sequestre"]:
+        """
+        Récupère une œuvre par son ID
+        ✅ CORRIGÉ : Restaure l'état directement sans passer par les transitions
+        """
+        for dossier in ["a_moderer", "fond_commun", "sequestre", "archives"]:
             path = self._get_path(dossier, id_oeuvre)
             if os.path.exists(path):
                 with open(path, 'r', encoding='utf-8') as f:
                     data = self._parse_from_markdown(f.read())
                     
-                    # --- CORRECTION ICI AUSSI ---
                     user_stub = Utilisateur(
                         nom="Inconnu", 
                         prenom="", 
-                        email=data.get("soumis_par"), 
+                        email=data.get("soumis_par", "inconnu"), 
                         mdp=""
                     )
                     
-                    o = Oeuvre(data.get("titre"), data.get("auteur"), data.get("fichier"), user_stub)
+                    o = Oeuvre(
+                        data.get("titre", "Sans titre"), 
+                        data.get("auteur", "Inconnu"), 
+                        data.get("fichier", ""), 
+                        user_stub
+                    )
                     
+                    # ✅ CORRECTION : Restaurer l'état DIRECTEMENT
                     etat_str = data.get("etat")
+                    
                     if etat_str == "EN_TRAITEMENT":
-                        o.traiter()
+                        from src.app.domain.modeles import EtatEnTraitement
+                        o._etat_actuel = EtatEnTraitement()
+                        
                     elif etat_str == "VALIDEE":
-                        o.valider()
+                        from src.app.domain.modeles import EtatValidee
+                        o._etat_actuel = EtatValidee()
+                        
+                    elif etat_str == "REFUSEE":
+                        from src.app.domain.modeles import EtatRefusee
+                        o._etat_actuel = EtatRefusee()
+                    
+                    # Si "SOUMISE", on ne fait rien (état par défaut)
                     
                     return o
         return None
 
     def deplacer_vers_catalogue(self, oeuvre: Oeuvre, destination: str):
+        """Déplace une œuvre vers un catalogue (fond_commun, etc.)"""
         filename = f"{oeuvre.titre.replace(' ', '_')}.md"
         old_path = self._get_path("a_moderer", filename)
         new_path = self._get_path(destination, filename)
         self._ensure_dir(destination)
 
         if os.path.exists(old_path):
-            os.rename(old_path, new_path)
-            
             content = self._serialize_to_markdown(oeuvre)
+            
+            # Écrire dans le nouveau dossier
             with open(new_path, 'w', encoding='utf-8') as f:
                 f.write(content)
+            
+            # Supprimer l'ancien
+            os.remove(old_path)
 
+            # Git
             self.repo.index.remove([old_path])
             self.repo.index.add([new_path])
             self.repo.index.commit(f"Publication: {oeuvre.titre}")
+
+    def archiver_rejet(self, oeuvre: Oeuvre, motif: str):
+        """Archive une œuvre rejetée"""
+        oeuvre.set_metadonnee("motif_rejet", motif)
+        
+        filename = f"{oeuvre.titre.replace(' ', '_')}.md"
+        old_path = self._get_path("a_moderer", filename)
+        new_path = self._get_path("archives", filename)
+        
+        self._ensure_dir("archives")
+        
+        content = self._serialize_to_markdown(oeuvre)
+        with open(new_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        if os.path.exists(old_path):
+            os.remove(old_path)
+            self.repo.index.remove([old_path])
+        
+        self.repo.index.add([new_path])
+        self.repo.index.commit(f"Rejet: {oeuvre.titre}")
+
+    def lire_contenu_oeuvre(self, id_oeuvre: str) -> bytes:
+        """Lit le contenu d'une œuvre pour chiffrement"""
+        for dossier in ["a_moderer", "fond_commun", "sequestre"]:
+            path = self._get_path(dossier, id_oeuvre)
+            if os.path.exists(path):
+                with open(path, 'rb') as f:
+                    return f.read()
+        
+        raise FileNotFoundError(f"Oeuvre '{id_oeuvre}' introuvable")
+
+    def sauvegarder_emprunt(self, emprunt):
+        """Sauvegarde un emprunt"""
+        import json
+        
+        emprunt_dir = os.path.join(self.root_dir, "data", "emprunts")
+        os.makedirs(emprunt_dir, exist_ok=True)
+        
+        emprunt_file = os.path.join(emprunt_dir, f"{emprunt.id}.json")
+        
+        emprunt_data = {
+            "id": emprunt.id,
+            "oeuvre_id": emprunt.oeuvre_id,
+            "oeuvre_titre": emprunt.oeuvre_titre,
+            "utilisateur_email": emprunt.utilisateur_email,
+            "date_debut": emprunt.date_debut.isoformat(),
+            "date_fin": emprunt.date_fin.isoformat(),
+            "est_actif": emprunt.est_actif
+        }
+        
+        with open(emprunt_file, 'w', encoding='utf-8') as f:
+            json.dump(emprunt_data, f, indent=2)
+        
+        self.repo.index.add([emprunt_file])
+        self.repo.index.commit(f"Emprunt: {emprunt.oeuvre_titre}")
+        print(f"[Git] Emprunt sauvegardé : {emprunt.id}")
+
+    def supprimer_emprunt(self, id_emprunt: str):
+        """Supprime un emprunt"""
+        emprunt_file = os.path.join(self.root_dir, "data", "emprunts", f"{id_emprunt}.json")
+        
+        if os.path.exists(emprunt_file):
+            os.remove(emprunt_file)
+            try:
+                self.repo.index.remove([emprunt_file])
+                self.repo.index.commit(f"Retour: {id_emprunt}")
+            except:
+                pass
+
+    def lister_toutes_oeuvres(self) -> List[Oeuvre]:
+        """Liste toutes les œuvres (tous dossiers)"""
+        toutes = []
+        for dossier in ["a_moderer", "fond_commun", "sequestre", "archives"]:
+            path = os.path.join(self.root_dir, "data", dossier)
+            if not os.path.exists(path):
+                continue
+            
+            for filename in os.listdir(path):
+                if filename.endswith(".md"):
+                    try:
+                        with open(os.path.join(path, filename), 'r') as f:
+                            data = self._parse_from_markdown(f.read())
+                            user_stub = Utilisateur("Inc", "", data.get("soumis_par", "?"), "")
+                            o = Oeuvre(
+                                data.get("titre", "?"),
+                                data.get("auteur", "?"),
+                                data.get("fichier", ""),
+                                user_stub
+                            )
+                            toutes.append(o)
+                    except:
+                        pass
+        return toutes
