@@ -1,0 +1,17 @@
+{
+  "oeuvres": [
+    {
+      "id": "cv.md",
+      "titre": "cv",
+      "auteur": "Assane KANE",
+      "fichier_nom": "cv.md",
+      "dossier": "a_moderer",
+      "soumis_par": "admin@biblioteko.com",
+      "date_soumission": "2026-01-05T11:51:33.240940",
+      "etat": "SOUMISE",
+      "metadonnees": {}
+    }
+  ],
+  "version": "1.0",
+  "derniere_maj": "2026-01-05T11:51:33.241420"
+}
