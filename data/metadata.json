@@ -16,13 +16,13 @@
       "titre": "fbff",
       "auteur": "fbn",
       "fichier_nom": "fbff.md",
-      "dossier": "a_moderer",
+      "dossier": "sequestre",
       "soumis_par": "admin@biblioteko.com",
       "date_soumission": "2026-01-05T14:18:41.096829",
-      "etat": "EN_TRAITEMENT",
+      "etat": "VALIDEE",
       "metadonnees": {}
     }
   ],
   "version": "1.0",
-  "derniere_maj": "2026-01-05T14:18:41.097466"
+  "derniere_maj": "2026-01-05T14:19:11.633197"
 }
