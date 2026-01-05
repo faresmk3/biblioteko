@@ -1,0 +1,6 @@
+titre: "cv"
+auteur: "assane kane"
+fichier: "cv.md"
+soumis_par: "admin@biblioteko.com"
+date: "2026-01-05T07:49:57.242126"
+etat: "SOUMISE"
