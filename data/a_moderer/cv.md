@@ -1,6 +1,12 @@
-titre: "cv"
-auteur: "assane kane"
-fichier: "cv.md"
-soumis_par: "admin@biblioteko.com"
-date: "2026-01-05T07:49:57.242126"
-etat: "SOUMISE"
+<hr style='border:1px solid #ccc; margin:40px 0;'>
+<div style='border: 1px solid #ddd; box-shadow: 2px 2px 12px rgba(0,0,0,0.1); padding: 20px; margin: 20px auto; max-width: 800px; background-color: #fafafa;'>
+<h2 style='text-align:center;'>Page 1</h2>
+<p style='line-height:1.6; font-family:Georgia, serif;'>EXPÉRIENCES EN ENSEIGNEMENT<br><br>©  Tuteur en mathématiques,<br>cours privés<br>10/2013 - 07/2021<br><br>tâches/missions<br>— Encadrement d'é<br><br>JOAË, SENEGAL<br><br>èves de primaire et collège en mathématiques.<br><br>— Aide à la compréhension et correction d'exercices pour améliorer leurs résultats<br><br>scolaires.<br><br>EXPÉRIENCES PROFESSIONNELLES<br><br>Stage de développement web<br>IRIT-Jean Jaurès<br><br>05/2025 - Présent Toulouse<br>missions<br><br>— Développement d'une application ReactIS : analyse, conception, tests et<br>validation.<br><br>— Intégration du web sémantique et rédaction de la documentation technique.<br><br>Application de gestion automatique des emplois du temps<br>université Toulouse 2 Jean Jaurès<br><br>41/9N9A L DrAcont<br><br>Frameworks<br>react, Node.js, bootstrap 5, spring boot, junit 4,junit 5,<br>unittest,<br><br>SGBD<br>MariaDB, MySQL, PostgreSQL<br><br>SOFT SKILLS<br><br>Esprit d'équipe Autonomie leadership<br><br>Gestion du temps Communication<br><br>capacité d'adaptation Curiosité technique<br><br>Esprit analytique Résolution de problèmes<br><br>PROJETS PERSONNELS<br><br>TaskBoard - Application de gestion de tâches<br>(projet personnel) (05/2025 - Présent)<br><br>— Application web full stack inspirée de Trello, avec<br>organisation des tâches en colonnes (à faire, en cours,<br>terminé), glisser-déposer, et gestion des rôles utilisateurs<br>(admin, utilisateur).<br><br>RS AR ER OR eat ORALE<br><br>CU</p>
+</div>
+
+<hr style='border:1px solid #ccc; margin:40px 0;'>
+<div style='border: 1px solid #ddd; box-shadow: 2px 2px 12px rgba(0,0,0,0.1); padding: 20px; margin: 20px auto; max-width: 800px; background-color: #fafafa;'>
+<h2 style='text-align:center;'>Page 2</h2>
+<p style='line-height:1.6; font-family:Georgia, serif;'>Maguette KANE rneassanesi@gmalcor<br><br>: 0766048211<br>Développeur full stack<br><br>Toulouse<br><br>© æ À<br><br>logibuilder.github.io/assane.kane<br><br>Ai<br><br>linkedin.com/in/assane-kane-10bb19267<br><br>github.com/Logibuilder?tab=repositories<br><br>9 E<br><br>Étudiant en Master 1 Génie Logiciel - Université de Lille - rentrée 2025 À la recherche d'une alternance en développement logiciel, je souhaite mettre en<br>pratique mes compétences en Java, Spring Boot et React pour évoluer vers le métier d'architecte logiciel. Curieux, rigoureux et impliqué, je veux allier théorie et<br>pratique pour contribuer à des projets concrets et innovants.<br><br>FORMATIONS COMPETENCES TECHNIQUES<br>© Licence 3 MIASHS( Mathématiques et Informatique Langages de programmation<br>Appliquées aux Sciences humaines et Sociales) JAVA, JAVASCRIPT, PYTHON, PHP, SQL, C/C++<br><br>université Jean Jaurès Toulouse Langage de conception<br>09/2024 - Présent Toulouse UML</p>
+</div>
+
