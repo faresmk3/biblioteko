@@ -1,107 +1,136 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <title>Espace Modération - Culture Diffusion</title>
+    <meta charset="UTF-8">
+    <title>Modération - Biblioteko</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container py-5 bg-light">
-    
-    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container">
+        <span class="navbar-brand">🛡️ Espace Modérateur</span>
         <div>
-            <h1 class="h3 text-primary">🛡️ Espace Modération</h1>
-            <p class="text-muted mb-0">Validation, enrichissement et gestion des droits</p>
+            <span class="text-white me-3">Bonjour, <span tal:content="user.nom">Admin</span></span>
+            <a href="/" class="btn btn-outline-light btn-sm">🏠 Accueil</a>
+            <a href="/logout" class="btn btn-danger btn-sm">Déconnexion</a>
         </div>
-        <a href="/" class="btn btn-outline-secondary">Retour à l'accueil</a>
+    </div>
+</nav>
+
+<div class="container">
+    
+    <div tal:condition="error" class="alert alert-danger" tal:content="error"></div>
+
+    <h2 class="mb-4">Œuvres en attente de validation</h2>
+
+    <div tal:condition="not oeuvres" class="alert alert-success text-center py-5">
+        <h4>✅ Tout est à jour !</h4>
+        <p>Aucune œuvre en attente de modération pour le moment.</p>
     </div>
 
-    <div class="alert alert-danger shadow-sm" tal:condition="error" tal:content="error"></div>
+    <div class="row" tal:condition="oeuvres">
+        <div class="col-12 mb-4" tal:repeat="oeuvre oeuvres">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-primary">
+                        <span tal:content="oeuvre.titre">Titre</span>
+                        <small class="text-muted" tal:content="string:(${oeuvre.id})"></small>
+                    </h5>
+                    <span class="badge bg-secondary" tal:content="oeuvre.date_publication">2024</span>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="p-3 bg-light border rounded">
+                                <span class="display-4">📄</span>
+                                <br>
+                                <a tal:attributes="href string:/data/a_moderer/${oeuvre.id}.pdf" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                                    Voir le PDF
+                                </a>
+                                <br>
+                                <a tal:attributes="href string:/download_md/${oeuvre.id}" class="btn btn-sm btn-link mt-1">
+                                    Voir Markdown extrait
+                                </a>
+                            </div>
+                        </div>
 
-    <div class="card shadow-sm border-0" tal:condition="not: error">
-        <div class="card-header bg-white">
-            <h5 class="mb-0 text-secondary">Œuvres en attente de traitement</h5>
+                        <div class="col-md-9">
+                            <form action="/valider_form" method="post">
+                                <input type="hidden" name="id" tal:attributes="value oeuvre.id">
+
+                                <div class="alert alert-info py-2 mb-3" tal:condition="python: oeuvre.metadata.get('ai_analysis')">
+                                    <small>
+                                        <strong>🤖 Conseil IA :</strong>
+                                        <span tal:content="oeuvre.metadata.get('ai_reason')">Raison...</span>
+                                    </small>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">Titre (Editable)</label>
+                                        <input type="text" name="titre" class="form-control" tal:attributes="value oeuvre.titre">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">Auteur (Editable)</label>
+                                        <input type="text" name="auteur" class="form-control" tal:attributes="value oeuvre.auteur_nom">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-muted">Catégories</label>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Livres" 
+                                                   tal:attributes="checked python: 'Livres' in oeuvre.categories">
+                                            <label class="form-check-label">Livres</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Articles"
+                                                   tal:attributes="checked python: 'Articles' in oeuvre.categories">
+                                            <label class="form-check-label">Articles</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Musique"
+                                                   tal:attributes="checked python: 'Musique' in oeuvre.categories">
+                                            <label class="form-check-label">Musique</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <div class="row align-items-end">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">Statut Juridique</label>
+                                        <select name="type_droit" class="form-select" 
+                                                tal:attributes="class python: 'form-select border-success' if oeuvre.est_domaine_public else 'form-select border-warning'">
+                                            
+                                            <option value="prive" tal:attributes="selected python: not oeuvre.est_domaine_public">
+                                                🔒 Sous Droits (Séquestre)
+                                            </option>
+                                            
+                                            <option value="public" tal:attributes="selected python: oeuvre.est_domaine_public">
+                                                🌍 Domaine Public (Gratuit)
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6 d-flex justify-content-end gap-2 mt-3 mt-md-0">
+                                        <a tal:attributes="href string:/rejeter/${oeuvre.id}" class="btn btn-danger">❌ Rejeter</a>
+                                        
+                                        <button type="submit" class="btn btn-success">✅ Valider</button>
+                                    </div>
+                                </div>
+                            </form> 
+                            </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <ul class="list-group list-group-flush">
-            <li tal:repeat="oeuvre oeuvres" class="list-group-item p-4">
-                <div class="row g-4">
-                    
-                    <div class="col-md-3 text-center border-end">
-                        <div class="mb-3">
-                            <span class="badge bg-secondary mb-2">ID: <span tal:content="oeuvre.id">123</span></span>
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <a tal:attributes="href string:/data/a_moderer/${oeuvre.id}.pdf" 
-                               target="_blank" 
-                               class="btn btn-outline-primary btn-sm">
-                               👁️ Voir le PDF
-                            </a>
-                            
-                            <a tal:attributes="href string:/download_md/${oeuvre.id}" 
-                               class="btn btn-outline-dark btn-sm">
-                               ⬇️ Télécharger Markdown
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-9">
-                        <form action="/valider_form" method="post">
-                            <input type="hidden" name="id" tal:attributes="value oeuvre.id">
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-uppercase text-muted">Titre de l'œuvre</label>
-                                    <input type="text" name="titre" class="form-control" 
-                                           tal:attributes="value oeuvre.titre" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-uppercase text-muted">Auteur</label>
-                                    <input type="text" name="auteur" class="form-control" 
-                                           tal:attributes="value oeuvre.auteur_nom" required>
-                                </div>
-                            </div>
-
-                            <div class="row align-items-end">
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-uppercase text-muted">Statut Juridique</label>
-                                    <select name="type_droit" class="form-select">
-                                        <option value="prive">🔒 Sous Droits (Séquestre - Emprunt)</option>
-                                        <option value="public">🌍 Domaine Public (Accès Libre)</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-6 d-flex justify-content-end gap-2 mt-3 mt-md-0">
-                                    
-                                    <a tal:attributes="href string:/rejeter/${oeuvre.id}" 
-                                       class="btn btn-danger"
-                                       onclick="return confirm('Attention : Cette action est irréversible. Rejeter l\'œuvre ?');">
-                                       ❌ Rejeter
-                                    </a>
-
-                                    <button type="submit" class="btn btn-success">
-                                        ✅ Valider & Publier
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </li>
-            
-            <li tal:condition="not: oeuvres" class="list-group-item text-center py-5">
-                <div class="text-muted">
-                    <p class="fs-1 mb-2">🎉</p>
-                    <p class="mb-0">Aucune œuvre à modérer pour le moment.</p>
-                    <small>Bon travail !</small>
-                </div>
-            </li>
-        </ul>
     </div>
-
-    <footer class="mt-5 text-center text-muted small">
-        &copy; 2024 Culture Diffusion - Interface Bibliothécaire
-    </footer>
+</div>
 
 </body>
 </html>

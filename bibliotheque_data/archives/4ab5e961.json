@@ -1,0 +1,16 @@
+{
+    "id": "4ab5e961",
+    "titre": "AI Parsing Error",
+    "auteur_nom": "Unknown",
+    "categories": [
+        "Livres"
+    ],
+    "date_publication": "2024",
+    "etat_classe": "EtatRefusee",
+    "contenu_markdown": "{\n  \"titre\": \"The Cats of Ulthar\",\n  \"auteur\": \"H. P. Lovecraft\",\n  \"date_publication\": 2019,\n  \"est_domaine_public\": false,\n  \"raison\": \"The original story by H.P. Lovecraft is in the public domain, but this document is a new annotated edition produced in 2019 by David Haden, including new commentary, layout, and images, which are subject to their own copyright.\",\n  \"contenu_markdown\": \"# The Cats of Ulthar\\nby H. P. Lovecraft\\nFully annotated\\n\\n![Black cat illustration](/image_of_black_cat_on\n...[JSON Parsing Failed]",
+    "est_domaine_public": false,
+    "metadata": {
+        "ai_analysis": true,
+        "ai_reason": "Analyse effectuée"
+    }
+}

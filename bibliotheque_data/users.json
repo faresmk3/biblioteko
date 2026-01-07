@@ -1,38 +1,27 @@
 {
-    "admin@biblio.com": {
-        "id": "root",
+    "admin_id": {
+        "id": "admin_id",
         "nom": "Administrateur",
         "email": "admin@biblio.com",
-        "mot_de_passe": "admin123",
+        "mot_de_passe_hache": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
         "roles": [
-            "Bibliothecaire"
+            "admin"
+        ],
+        "permissions": [
+            "peut_moderer_oeuvre",
+            "peut_proposer_oeuvre"
         ]
     },
-    "amine.tifoun@biblio.com": {
-        "id": "e0c325f8",
-        "nom": "Amine Tifoun",
-        "email": "amine.tifoun@biblio.com",
-        "mot_de_passe": "hard",
-        "roles": [
-            "Membre"
-        ]
-    },
-    "jonas.numas@biblio.com": {
-        "id": "f2e5018f",
-        "nom": "Jonas Numa",
-        "email": "jonas.numas@biblio.com",
-        "mot_de_passe": "123",
-        "roles": [
-            "Membre"
-        ]
-    },
-    "f@biblio.com": {
-        "id": "e38986de",
-        "nom": "ff",
+    "434e102f": {
+        "id": "434e102f",
+        "nom": "f",
         "email": "f@biblio.com",
-        "mot_de_passe": "f",
+        "mot_de_passe_hache": "252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111",
         "roles": [
-            "Membre"
+            "membre"
+        ],
+        "permissions": [
+            "peut_proposer_oeuvre"
         ]
     }
 }

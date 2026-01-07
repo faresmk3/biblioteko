@@ -1,48 +1,58 @@
-# src/app/infrastructure/users_repo.py
 import os
 import json
 from typing import Optional
 from core.auth import Utilisateur
-from core.roles_config import RoleFactory # Nécessaire pour reconstruire les rôles
 
 class FileSystemUserRepository:
     def __init__(self, base_path: str):
-        self.file_path = os.path.join(base_path, "users.json")
+        self.base_path = base_path
+        # On stocke tous les utilisateurs dans un seul fichier JSON pour simplifier
+        self.users_file = os.path.join(base_path, "users.json")
         self._ensure_file_exists()
 
     def _ensure_file_exists(self):
-        if not os.path.exists(self.file_path):
-            with open(self.file_path, 'w', encoding='utf-8') as f:
+        """Crée le fichier users.json s'il n'existe pas"""
+        if not os.path.exists(self.users_file):
+            with open(self.users_file, 'w') as f:
                 json.dump({}, f)
 
-    def sauvegarder(self, user: Utilisateur):
-        users_data = self._read_all_data()
-        users_data[user.email] = user.to_dict()
-        with open(self.file_path, 'w', encoding='utf-8') as f:
-            json.dump(users_data, f, indent=4, ensure_ascii=False)
+    def _load_db(self):
+        """Charge le contenu du JSON"""
+        try:
+            with open(self.users_file, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
+
+    def _save_db(self, data):
+        """Sauvegarde le dictionnaire dans le JSON"""
+        with open(self.users_file, 'w') as f:
+            json.dump(data, f, indent=4)
+
+    def sauvegarder(self, utilisateur: Utilisateur):
+        """Enregistre ou met à jour un utilisateur"""
+        db = self._load_db()
+        # On utilise l'ID comme clé
+        db[utilisateur.id] = utilisateur.to_dict()
+        self._save_db(db)
 
     def trouver_par_email(self, email: str) -> Optional[Utilisateur]:
-        users_data = self._read_all_data()
-        data = users_data.get(email)
-        
-        if not data:
-            return None
-            
-        user = Utilisateur.from_dict(data)
-        
-        # Réhydratation des Rôles (Redonner les pouvoirs)
-        role_names = data.get("roles", [])
-        for role_name in role_names:
-            if role_name == "Bibliothecaire":
-                user.ajouter_role(RoleFactory.get_role_bibliothecaire())
-            elif role_name == "Membre":
-                user.ajouter_role(RoleFactory.get_role_membre())
-                
-        return user
+        """Cherche un utilisateur par son email"""
+        db = self._load_db()
+        for user_data in db.values():
+            if user_data.get('email') == email:
+                return Utilisateur.from_dict(user_data)
+        return None
 
-    def _read_all_data(self) -> dict:
-        with open(self.file_path, 'r', encoding='utf-8') as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return {}
+    def trouver_par_id(self, user_id: str) -> Optional[Utilisateur]:
+        """
+        [CETTE MÉTHODE MANQUAIT]
+        Récupère un utilisateur par son ID unique.
+        Utilisé pour reconnecter l'utilisateur depuis sa session.
+        """
+        db = self._load_db()
+        user_data = db.get(user_id)
+        
+        if user_data:
+            return Utilisateur.from_dict(user_data)
+        return None

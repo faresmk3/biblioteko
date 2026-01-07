@@ -5,5 +5,12 @@
         "work_title": "ZA petit prince",
         "start_date": "2025-12-13",
         "end_date": "2025-12-27"
+    },
+    "bob@mail.com_32c2bbf2": {
+        "user": "bob@mail.com",
+        "work_id": "32c2bbf2",
+        "work_title": "newbla",
+        "start_date": "2026-01-03",
+        "end_date": "2026-01-17"
     }
 }

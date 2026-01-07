@@ -3,9 +3,17 @@ from typing import List
 from core.entities import Oeuvre
 
 class OCRProvider(ABC):
-    """Interface pour les services d'IA (Gemini, Pixtral)"""
+    # """Interface pour les services d'IA (Gemini, Pixtral)"""
+    # @abstractmethod
+    # def extraire_texte(self, fichier_binaire) -> str:
+    #     pass
+    
+    """
+    Interface for AI Services.
+    Now returns a dict: {'text': str, 'metadata': dict}
+    """
     @abstractmethod
-    def extraire_texte(self, fichier_binaire) -> str:
+    def analyser_oeuvre(self, fichier_binaire) -> dict:
         pass
 
 class OeuvreRepository(ABC):

@@ -20,47 +20,44 @@ class Utilisateur:
     nom: str
     email: str
     # On stocke le mot de passe (en clair pour ce MVP, à hasher en prod)
-    mot_de_passe: str
+    mot_de_passe_hache: str
     roles: List[Role] = field(default_factory=list)
+    permissions: List[str] = field(default_factory=list)
 
     def ajouter_role(self, role: Role):
         # On évite les doublons de rôles
         if not any(r.nom == role.nom for r in self.roles):
             self.roles.append(role)
 
-    def a_la_permission(self, nom_permission_requise: str) -> bool:
-        """
-        C'est le cœur du RBAC.
-        On parcourt tous les rôles de l'utilisateur.
-        Si l'un des rôles contient la permission demandée, c'est gagné.
-        """
-        for role in self.roles:
-            for permission in role.permissions:
-                if permission.nom == nom_permission_requise:
-                    return True
-        return False
+    def a_la_permission(self, permission: str) -> bool:
+        """ Vérifie si l'utilisateur a une permission spécifique. """
+        return permission in self.permissions
     # --- SERIALIZATION POUR SAUVEGARDE JSON ---
     def to_dict(self) -> dict:
         return {
             "id": self.id,
             "nom": self.nom,
             "email": self.email,
-            "mot_de_passe": self.mot_de_passe,
-            # On ne sauvegarde que le nom des rôles
-            "roles": [r.nom for r in self.roles]
+            "mot_de_passe_hache": self.mot_de_passe_hache,
+            # On sauvegarde la liste des noms des rôles
+            "roles": [r.nom for r in self.roles], 
+            "permissions": self.permissions
         }
 
-    @staticmethod
-    def from_dict(data: dict) -> 'Utilisateur':
-        u = Utilisateur(
-            id=data["id"],
-            nom=data["nom"],
-            email=data["email"],
-            mot_de_passe=data.get("mot_de_passe", "")
+    @classmethod
+    def from_dict(cls, data: dict):
+        # On reconstruit les objets Role à partir des chaînes
+        roles_names = data.get("roles", [])
+        roles_objects = [Role(nom=r_name) for r_name in roles_names]
+        
+        return cls(
+            id=data.get("id"),
+            nom=data.get("nom"),
+            email=data.get("email"),
+            mot_de_passe_hache=data.get("mot_de_passe_hache"),
+            roles=roles_objects, # On passe bien la liste d'objets attendue par le dataclass
+            permissions=data.get("permissions", [])
         )
-        # La réhydratation des rôles se fera via le Repository ou le Service
-        # car RoleFactory est dans un autre module (éviter import circulaire)
-        return u
     def __repr__(self):
         roles_str = ", ".join([r.nom for r in self.roles])
         return f"<Utilisateur {self.nom} (Rôles: {roles_str})>"

@@ -25,21 +25,30 @@ class FileSystemOeuvreRepository(OeuvreRepository):
         """Helper pour avoir le chemin du json OU du pdf"""
         return os.path.join(self.base_path, dossier, f"{id_oeuvre}.{extension}")
 
-    def sauvegarder(self, oeuvre: Oeuvre, dossier_cible: str, fichier_binaire=None) -> None:
-        # 1. Sauvegarde des métadonnées (JSON)
-        json_path = self._get_path(dossier_cible, oeuvre.id, "json")
-        with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(oeuvre.to_dict(), f, indent=4, ensure_ascii=False)
+    def sauvegarder(self, oeuvre, dossier_cible, fichier_binaire=None):
+        path_dossier = os.path.join(self.base_path, dossier_cible)
+        if not os.path.exists(path_dossier):
+            os.makedirs(path_dossier)
+
+        # DEBUG: Let's see what's inside before we fail
+        data_to_save = oeuvre.to_dict()
         
-        # 2. Sauvegarde du fichier PDF (Si fourni)
-        if fichier_binaire is not None:
-            pdf_path = self._get_path(dossier_cible, oeuvre.id, "pdf")
-            # On rembobine le fichier au cas où
-            if hasattr(fichier_binaire, 'seek'):
-                fichier_binaire.seek(0)
+        # 1. Save JSON Metadata
+        json_path = os.path.join(path_dossier, f"{oeuvre.id}.json")
+        try:
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(data_to_save, f, indent=4, ensure_ascii=False)
+        except TypeError as e:
+            print(f"DEBUG - Dictionary content: {data_to_save}")
+            raise TypeError(f"Serialization failed: {e}")
+
+        # 2. Save Binary PDF (Separately)
+        if fichier_binaire:
+            pdf_path = os.path.join(path_dossier, f"{oeuvre.id}.pdf")
             with open(pdf_path, 'wb') as f:
-                shutil.copyfileobj(fichier_binaire, f)
-            print(f"[DISK] PDF sauvegardé : {pdf_path}")
+                # Binary data is written directly to disk, not JSON
+                data = fichier_binaire.read() if hasattr(fichier_binaire, 'read') else fichier_binaire
+                f.write(data)
 
     def charger(self, id_oeuvre: str, dossier_source: str) -> Oeuvre:
         filepath = self._get_path(dossier_source, id_oeuvre, "json")

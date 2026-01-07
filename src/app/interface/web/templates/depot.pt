@@ -5,57 +5,99 @@
     <title>Déposer une œuvre - Culture Diffusion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container py-5">
+<body class="bg-light py-5">
     
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="h4 mb-0">Déposer une œuvre</h2>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 text-primary">Déposer une œuvre</h1>
+                    <a href="/" class="btn btn-outline-secondary btn-sm">Retour à l'accueil</a>
                 </div>
-                <div class="card-body">
-                    
-                    <p class="mb-4">
-                        Connecté en tant que : 
-                        <span class="badge bg-info text-dark" tal:content="user.nom">Nom</span>
-                    </p>
 
-                    <div class="alert alert-info" 
-                         tal:condition="message" 
-                         tal:content="message">Message ici</div>
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <p class="mb-0">
+                            Connecté en tant que : 
+                            <span class="badge bg-primary" tal:content="user.nom">Nom</span>
+                            <small class="text-muted ms-2" tal:content="user.email">email@test.com</small>
+                        </p>
+                    </div>
 
-                    <form tal:attributes="action string:/depot?user=${'alice' if user.nom == 'Alice' else 'bob'}" 
-                          method="post" 
-                          enctype="multipart/form-data">
+                    <div class="card-body p-4">
                         
-                        <div class="mb-3">
-                            <label for="titre" class="form-label">Titre de l'œuvre</label>
-                            <input type="text" class="form-control" id="titre" name="titre" required placeholder="Ex: Les Misérables">
+                        <div tal:condition="message" 
+                             tal:attributes="class python: 'alert alert-success' if 'Succès' in message else 'alert alert-danger'"
+                             role="alert">
+                            <span tal:content="message">Message ici</span>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="auteur" class="form-label">Auteur</label>
-                            <input type="text" class="form-control" id="auteur" name="auteur" required placeholder="Ex: Victor Hugo">
-                        </div>
+                        <form action="/depot" method="post" enctype="multipart/form-data">
+                            
+                            <div class="mb-3">
+                                <label for="titre" class="form-label fw-bold">Titre de l'œuvre</label>
+                                <input type="text" class="form-control" id="titre" name="titre" required 
+                                       placeholder="Ex: Les Misérables">
+                            </div>
 
-                        <div class="mb-4">
-                            <label for="fichier" class="form-label">Fichier PDF</label>
-                            <input type="file" class="form-control" id="fichier" name="fichier" accept=".pdf" required>
-                            <div class="form-text">Format PDF uniquement.</div>
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Envoyer à la modération</button>
-                        </div>
-                    </form>
+                            <div class="mb-3">
+                                <label for="auteur" class="form-label fw-bold">Auteur</label>
+                                <input type="text" class="form-control" id="auteur" name="auteur" required 
+                                       placeholder="Ex: Victor Hugo">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Catégories</label>
+                                <div class="card card-body bg-light border-0 py-2">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Livres" id="cat_livres">
+                                            <label class="form-check-label" for="cat_livres">📚 Livres</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Musique" id="cat_musique">
+                                            <label class="form-check-label" for="cat_musique">🎵 Musique</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Vidéos" id="cat_videos">
+                                            <label class="form-check-label" for="cat_videos">🎬 Vidéos</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="categories" value="Articles" id="cat_articles">
+                                            <label class="form-check-label" for="cat_articles">📰 Articles</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-text small mt-1">Sélectionnez une ou plusieurs catégories.</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="fichier" class="form-label fw-bold">Fichier PDF</label>
+                                <input type="file" class="form-control" id="fichier" name="fichier" accept=".pdf" required>
+                                <div class="form-text">
+                                    Le fichier sera analysé par IA pour en extraire le contenu (OCR).
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    📤 Envoyer à la modération
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
                 </div>
-                <div class="card-footer text-muted text-center">
-                    <a href="/" class="text-decoration-none me-3">Retour à l'accueil</a>
-                    <a href="/moderation?user=alice" class="text-decoration-none">Simulation : Accès Bibliothécaire</a>
+                
+                <div class="text-center mt-4">
+                    <small class="text-muted">&copy; 2024 Culture Diffusion</small>
                 </div>
+
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
