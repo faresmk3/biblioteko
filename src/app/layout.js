@@ -56,6 +56,30 @@ function Navbar() {
                     🔍 Modération
                   </Nav.Link>
                 )}
+
+                {/* 🆕 NOUVEAU : Pour les membres non-bibliothécaires */}
+                {!isBibliothecaire && (
+                  <>
+                    <Nav.Link as={Link} href="/devenir-bibliothecaire">
+                      🎓 Devenir bibliothécaire
+                    </Nav.Link>
+                    <Nav.Link as={Link} href="/mes-demandes">
+                      📋 Mes demandes
+                    </Nav.Link>
+                  </>
+                )}
+                
+                {/* Pour les bibliothécaires */}
+                {isBibliothecaire && (
+                  <>
+                    <Nav.Link as={Link} href="/moderation">
+                      🔍 Modération
+                    </Nav.Link>
+                    <Nav.Link as={Link} href="/moderation/demandes">
+                      📋 Demandes de promotion
+                    </Nav.Link>
+                  </>
+                )}
               </>
             )}
           </Nav>

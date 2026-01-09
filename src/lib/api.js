@@ -198,4 +198,54 @@ export const catalogueAPI = {
   }
 };
 
+
+// ============================================
+// DEMANDES DE PROMOTION
+// ============================================
+
+export const demandesAPI = {
+  // Pour les membres
+  soumettre: async (motivation) => {
+    const response = await apiClient.post('/demandes/soumettre', { motivation });
+    return response.data;
+  },
+
+  mesDemandes: async () => {
+    const response = await apiClient.get('/demandes/mes-demandes');
+    return response.data;
+  },
+
+  annuler: async (idDemande) => {
+    const response = await apiClient.post(`/demandes/${idDemande}/annuler`);
+    return response.data;
+  },
+
+  // Pour les bibliothécaires
+  listerEnAttente: async () => {
+    const response = await apiClient.get('/demandes/en-attente');
+    return response.data;
+  },
+
+  approuver: async (idDemande) => {
+    const response = await apiClient.post(`/demandes/${idDemande}/approuver`);
+    return response.data;
+  },
+
+  refuser: async (idDemande, motif) => {
+    const response = await apiClient.post(`/demandes/${idDemande}/refuser`, { motif });
+    return response.data;
+  },
+
+  historique: async (limit = 50) => {
+    const response = await apiClient.get(`/demandes/historique?limit=${limit}`);
+    return response.data;
+  },
+
+  statistiques: async () => {
+    const response = await apiClient.get('/demandes/statistiques');
+    return response.data;
+  }
+};
+
+
 export default apiClient;
