@@ -83,7 +83,7 @@ L'utilisation de **Git comme base de données** pour les fichiers Markdown perme
 - **Hachage** : Validation que deux mots de passe identiques produisent des hashs différents (sel bcrypt) : **OK**.
 - **OCR** : Extraction de texte depuis des PDF complexes : **OK**.
 - **JWT** : Rejet automatique des requêtes si le token est falsifié ou expiré : **OK**.
-
+![test_unitaire.png](test_unitaire.png)
 ### Procès-Verbal (PV)
 - **nbScénarios OK** : 15
 - **nbScénarios NOK** : 0
