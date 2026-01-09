@@ -4,8 +4,8 @@
   "nom_demandeur": "Assane KANE",
   "motivation": "qsdrftgyuioiuytreasd",
   "date_demande": "2026-01-09T14:33:46.323812",
-  "date_reponse": null,
-  "statut": "en_attente",
-  "traite_par_email": null,
+  "date_reponse": "2026-01-09T14:34:25.199212",
+  "statut": "approuvee",
+  "traite_par_email": "michael.launey@biblioteko.fr",
   "motif_refus": null
 }
