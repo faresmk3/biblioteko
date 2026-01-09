@@ -5,10 +5,10 @@
       "titre": "cv",
       "auteur": "Assane KANE",
       "fichier_nom": "cv.md",
-      "dossier": "a_moderer",
+      "dossier": "fond_commun",
       "soumis_par": "admin@biblioteko.com",
       "date_soumission": "2026-01-05T14:18:39.725269",
-      "etat": "EN_TRAITEMENT",
+      "etat": "VALIDEE",
       "metadonnees": {}
     },
     {
@@ -35,5 +35,5 @@
     }
   ],
   "version": "1.0",
-  "derniere_maj": "2026-01-09T10:24:12.908455"
+  "derniere_maj": "2026-01-09T10:24:19.591216"
 }
