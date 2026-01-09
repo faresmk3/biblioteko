@@ -362,6 +362,11 @@ class PermissionsSysteme:
     PEUT_GERER_UTILISATEURS = Permission("peut_gerer_utilisateurs")
     PEUT_GERER_DIFFUSION = Permission("peut_gerer_diffusion")
     
+
+    # Nouvelle permission pour gérer les demandes
+    PEUT_TRAITER_DEMANDES = Permission("peut_traiter_demandes_bibliothecaire")
+
+
     @classmethod
     def creer_role_bibliothecaire(cls) -> Role:
         """Factory pour créer un rôle bibliothécaire complet"""
@@ -370,6 +375,7 @@ class PermissionsSysteme:
         role.ajouter_permission(cls.PEUT_VALIDER)
         role.ajouter_permission(cls.PEUT_REJETER)
         role.ajouter_permission(cls.PEUT_GERER_DIFFUSION)
+        role.ajouter_permission(cls.PEUT_TRAITER_DEMANDES)
         return role
     
     @classmethod
@@ -379,4 +385,143 @@ class PermissionsSysteme:
         role.ajouter_permission(cls.PEUT_EMPRUNTER)
         role.ajouter_permission(cls.PEUT_RENOUVELER)
         return role
+
+
+
+class StatutDemande(Enum):
+    """États possibles d'une demande"""
+    EN_ATTENTE = "en_attente"
+    APPROUVEE = "approuvee"
+    REFUSEE = "refusee"
+    ANNULEE = "annulee"
+
+
+class DemandeBibliothecaire:
+    """
+    Représente une demande de promotion en bibliothécaire
+    
+    Workflow :
+    1. Membre fait une demande (EN_ATTENTE)
+    2. Bibliothécaire approuve (APPROUVEE) ou refuse (REFUSEE)
+    3. Système applique automatiquement la promotion si approuvée
+    """
+    
+    def __init__(self, membre: 'Utilisateur', motivation: str = ""):
+        self.id = f"demande_{secrets.token_hex(8)}"
+        self.email_demandeur = membre.email
+        self.nom_demandeur = f"{membre.prenom} {membre.nom}"
+        self.motivation = motivation
+        
+        # Dates et statut
+        self.date_demande = datetime.now()
+        self.date_reponse: Optional[datetime] = None
+        self.statut = StatutDemande.EN_ATTENTE
+        
+        # Qui a traité la demande
+        self.traite_par_email: Optional[str] = None
+        self.motif_refus: Optional[str] = None
+    
+    def approuver(self, bibliothecaire: 'Utilisateur'):
+        """
+        Approuve la demande
+        
+        Args:
+            bibliothecaire: Le bibliothécaire qui approuve
+        
+        Raises:
+            PermissionError: Si pas bibliothécaire
+            ValueError: Si demande déjà traitée
+        """
+        if not bibliothecaire.a_la_permission("peut_moderer_oeuvre"):
+            raise PermissionError("Seuls les bibliothécaires peuvent approuver")
+        
+        if self.statut != StatutDemande.EN_ATTENTE:
+            raise ValueError(f"Demande déjà traitée (statut: {self.statut.value})")
+        
+        self.statut = StatutDemande.APPROUVEE
+        self.date_reponse = datetime.now()
+        self.traite_par_email = bibliothecaire.email
+        
+        print(f"[Demande] ✅ Approuvée par {bibliothecaire.email}")
+    
+    def refuser(self, bibliothecaire: 'Utilisateur', motif: str):
+        """
+        Refuse la demande
+        
+        Args:
+            bibliothecaire: Le bibliothécaire qui refuse
+            motif: Raison du refus
+        
+        Raises:
+            PermissionError: Si pas bibliothécaire
+            ValueError: Si demande déjà traitée
+        """
+        if not bibliothecaire.a_la_permission("peut_moderer_oeuvre"):
+            raise PermissionError("Seuls les bibliothécaires peuvent refuser")
+        
+        if self.statut != StatutDemande.EN_ATTENTE:
+            raise ValueError(f"Demande déjà traitée (statut: {self.statut.value})")
+        
+        self.statut = StatutDemande.REFUSEE
+        self.date_reponse = datetime.now()
+        self.traite_par_email = bibliothecaire.email
+        self.motif_refus = motif
+        
+        print(f"[Demande] ❌ Refusée par {bibliothecaire.email}: {motif}")
+    
+    def annuler(self, membre: 'Utilisateur'):
+        """
+        Le membre annule sa propre demande
+        
+        Args:
+            membre: Le membre qui a fait la demande
+        
+        Raises:
+            ValueError: Si ce n'est pas son propre demande ou si déjà traitée
+        """
+        if membre.email != self.email_demandeur:
+            raise ValueError("Vous ne pouvez annuler que vos propres demandes")
+        
+        if self.statut != StatutDemande.EN_ATTENTE:
+            raise ValueError("Demande déjà traitée, impossible d'annuler")
+        
+        self.statut = StatutDemande.ANNULEE
+        self.date_reponse = datetime.now()
+        
+        print(f"[Demande] 🚫 Annulée par le demandeur")
+    
+    def est_en_attente(self) -> bool:
+        """Vérifie si la demande est en attente"""
+        return self.statut == StatutDemande.EN_ATTENTE
+    
+    def est_approuvee(self) -> bool:
+        """Vérifie si la demande est approuvée"""
+        return self.statut == StatutDemande.APPROUVEE
+    
+    def delai_traitement_jours(self) -> Optional[int]:
+        """Calcule le délai de traitement en jours"""
+        if not self.date_reponse:
+            # Délai depuis la demande
+            return (datetime.now() - self.date_demande).days
+        else:
+            # Délai réel de traitement
+            return (self.date_reponse - self.date_demande).days
+    
+    def to_dict(self) -> dict:
+        """Convertit en dictionnaire pour JSON"""
+        return {
+            "id": self.id,
+            "email_demandeur": self.email_demandeur,
+            "nom_demandeur": self.nom_demandeur,
+            "motivation": self.motivation,
+            "date_demande": self.date_demande.isoformat(),
+            "date_reponse": self.date_reponse.isoformat() if self.date_reponse else None,
+            "statut": self.statut.value,
+            "traite_par": self.traite_par_email,
+            "motif_refus": self.motif_refus,
+            "delai_jours": self.delai_traitement_jours()
+        }
+    
+    def __repr__(self):
+        return f"<Demande {self.id} de {self.email_demandeur} [{self.statut.value}]>"
 

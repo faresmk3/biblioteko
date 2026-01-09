@@ -1,0 +1,22 @@
+{
+  "assane.kane@biblioteko.fr": {
+    "nom": "KANE",
+    "prenom": "Assane",
+    "email": "assane.kane@biblioteko.fr",
+    "courriel": "assane.kane@biblioteko.fr",
+    "mot_de_passe": "$2b$12$87HWp.QyNyPSPrx86xurwufFY1gtHlF9ZuOihoUh64PLe0Uj8oanm",
+    "roles": [
+      "Membre"
+    ]
+  },
+  "michael.launey@biblioteko.fr": {
+    "nom": "launey",
+    "prenom": "Michael",
+    "email": "michael.launey@biblioteko.fr",
+    "courriel": "michael.launey@biblioteko.fr",
+    "mot_de_passe": "$2b$12$BR6A8R0nzuA3/2zt.orF7enfyF6wm4GTcaxqkWolUeLtTbLHcJBCi",
+    "roles": [
+      "Bibliothécaire"
+    ]
+  }
+}

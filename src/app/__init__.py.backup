@@ -1,48 +1,154 @@
-# src/app/__init__.py
+# ============================================
+# FICHIER COMPLET: src/app/__init__.py
+# ============================================
+"""
+Configuration principale de l'application Pyramid
+Injection de dépendances et configuration CORS
+"""
 import os
 from pyramid.config import Configurator
-from pyramid.response import Response  # <--- N'oubliez pas cet import !
-from src.app.infra.repositories import FileSystemGitRepository
-from src.app.domain.services import ServiceOeuvre
+from pyramid.response import Response
+from src.app.infra.repositories import FileSystemGitRepository, RepoUtilisateurs
+from src.app.infra.crypto import ServiceChiffrement
+from src.app.domain.services import ServiceOeuvre, ServiceEmprunt, ServiceReconnaissanceIA
+
 
 def main(global_config, **settings):
-    """ Fonction principale qui construit l'application WSGI. """
+    """
+    Fonction principale qui construit l'application WSGI
+    
+    Cette fonction :
+    1. Configure les routes et les vues
+    2. Initialise tous les dépôts (repositories)
+    3. Initialise tous les services métier
+    4. Enregistre tout dans le registre Pyramid
+    5. Configure CORS
+    """
     with Configurator(settings=settings) as config:
         
-        # 1. Configuration des routes et des vues
+        # ====================================
+        # 1. CONFIGURATION DES ROUTES ET VUES
+        # ====================================
         config.include('.routes')
-        config.scan('.views')
-
-        # 2. Injection de Dépendances
+        
+        # Scanner tous les modules de vues
+        config.scan('.views.api')
+        config.scan('.views.auth_views')
+        config.scan('.views.emprunts')
+        config.scan('.views.classification')
+        config.scan('.views.multi_ia')
+        config.scan('.views.catalogue')
+        config.scan('.views.autres')
+        
+        # ====================================
+        # 2. INJECTION DE DÉPENDANCES
+        # ====================================
+        
+        # Déterminer le répertoire racine
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        data_path = os.path.join(root_dir, 'data')
+        
+        # Créer le dossier data s'il n'existe pas
+        if not os.path.exists(data_path):
+            os.makedirs(data_path)
+            print(f"[Init] Dossier data créé : {data_path}")
+        
+        # Créer la structure de dossiers nécessaire
+        dossiers_requis = ['a_moderer', 'fond_commun', 'sequestre', 'archives', 'emprunts']
+        for dossier in dossiers_requis:
+            dossier_path = os.path.join(data_path, dossier)
+            if not os.path.exists(dossier_path):
+                os.makedirs(dossier_path)
+                print(f"[Init] Dossier créé : {dossier}")
+        
         print(f"[Pyramid] Démarrage avec stockage dans : {root_dir}")
-
-        repo = FileSystemGitRepository(root_dir)
-        service = ServiceOeuvre(repo)
-        config.registry.service_oeuvre = service
-
-        # 3. Gestion du CORS (Correction ici)
+        
+        # ====================================
+        # 3. INITIALISATION DES REPOSITORIES
+        # ====================================
+        
+        # Repository pour les œuvres (Git + Filesystem)
+        repo_oeuvres = FileSystemGitRepository(root_dir)
+        
+        # Repository pour les utilisateurs (JSON)
+        users_json_path = os.path.join(data_path, 'users.json')
+        repo_users = RepoUtilisateurs(users_json_path)
+        
+        # Service de chiffrement
+        service_crypto = ServiceChiffrement()
+        
+        print("[Init] Repositories initialisés")
+        
+        # ====================================
+        # 4. INITIALISATION DES SERVICES
+        # ====================================
+        
+        # Service de gestion des œuvres
+        service_oeuvre = ServiceOeuvre(repo_oeuvres)
+        
+        # Service de gestion des emprunts
+        service_emprunt = ServiceEmprunt(repo_oeuvres, service_crypto)
+        
+        # Service de reconnaissance multi-IA
+        service_ia = ServiceReconnaissanceIA()
+        
+        print("[Init] Services métier initialisés")
+        
+        # ====================================
+        # 5. ENREGISTREMENT DANS LE REGISTRE
+        # ====================================
+        
+        # Repositories
+        config.registry.repo_oeuvres = repo_oeuvres
+        config.registry.depot_utilisateurs = repo_users
+        
+        # Services
+        config.registry.service_oeuvre = service_oeuvre
+        config.registry.service_emprunt = service_emprunt
+        config.registry.service_ia = service_ia
+        
+        # Service crypto (peut être utile ailleurs)
+        config.registry.service_crypto = service_crypto
+        
+        print("[Init] Registre Pyramid configuré")
+        
+        # ====================================
+        # 6. CONFIGURATION CORS
+        # ====================================
         config.add_tween('src.app.cors_tween_factory')
-
+        
+        print("[Init] CORS configuré")
+        print("[Init] Application prête ✓")
+    
     return config.make_wsgi_app()
 
+
 def cors_tween_factory(handler, registry):
+    """
+    Factory pour le middleware CORS
+    
+    Permet les requêtes cross-origin depuis n'importe quelle origine
+    Nécessaire pour les applications frontend (React, Vue, etc.)
+    """
     def cors_tween(request):
-        # Si c'est une requête de pré-vérification (OPTIONS), on répond direct !
+        # Requête de pré-vérification (OPTIONS)
         if request.method == 'OPTIONS':
             response = Response()
             response.headers['Access-Control-Allow-Origin'] = '*'
-            response.headers['Access-Control-Allow-Methods'] = 'POST,GET,DELETE,PUT,OPTIONS'
+            response.headers['Access-Control-Allow-Methods'] = 'POST,GET,DELETE,PUT,PATCH,OPTIONS'
             response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization'
+            response.headers['Access-Control-Max-Age'] = '3600'
             return response
-
-        # Sinon, on laisse passer la requête vers votre vue (api_depot, etc.)
+        
+        # Requête normale - traiter puis ajouter les headers CORS
         response = handler(request)
         
-        # Et on ajoute les headers CORS à la réponse
+        # Ajouter les headers CORS à toutes les réponses
         response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST,GET,DELETE,PUT,OPTIONS'
+        response.headers['Access-Control-Allow-Methods'] = 'POST,GET,DELETE,PUT,PATCH,OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization'
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Length, Content-Type'
         
         return response
+    
     return cors_tween

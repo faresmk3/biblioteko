@@ -3,3 +3,8 @@ waitress
 gitpython
 pyramid_chameleon
 pyramid_debugtoolbar
+pdf2image
+pytesseract
+opencv-python
+Pillow
+numpy

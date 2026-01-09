@@ -322,6 +322,81 @@ def api_convertir_pdf(request):
 
 
 
+# À AJOUTER dans src/app/views/api.py
+
+# src/app/views/api.py - ROUTE CORRIGÉE
+
+@view_config(route_name='api_deposer_md', renderer='json', request_method='POST')
+def api_deposer_markdown(request):
+    """
+    Endpoint pour soumettre une œuvre directement en Markdown.
+    
+    ARCHITECTURE CORRIGÉE :
+    - metadata.json : Stocke les métadonnées (titre, auteur, état, etc.)
+    - fichier.md : Stocke le contenu COMPLET du livre (texte OCR)
+    
+    Paramètres multipart/form-data:
+        - titre: Titre de l'œuvre
+        - auteur: Auteur de l'œuvre
+        - contenu_markdown: Contenu COMPLET du livre en Markdown
+        - soumisPar: Email du membre
+    """
+    service = request.registry.service_oeuvre
+    
+    # 1. Validation des données
+    titre = request.POST.get('titre')
+    auteur = request.POST.get('auteur', 'Auteur inconnu')
+    contenu_markdown = request.POST.get('contenu_markdown')  # CONTENU COMPLET
+    email_membre = request.POST.get('soumisPar')
+    
+    if not titre or not email_membre:
+        request.response.status = 400
+        return {"error": "Titre et email requis"}
+    
+    if not contenu_markdown:
+        request.response.status = 400
+        return {"error": "Contenu Markdown requis"}
+    
+    # 2. Création de l'utilisateur
+    membre = Utilisateur(
+        nom="Membre",
+        prenom="",
+        email=email_membre,
+        mdp=""
+    )
+    
+    # 3. Création de l'œuvre (métadonnées uniquement)
+    fichier_nom = f"{titre.replace(' ', '_')}.md"
+    
+    oeuvre = Oeuvre(
+        titre=titre,
+        auteur=auteur,
+        fichier_nom=fichier_nom,
+        soumis_par=membre
+    )
+    
+    # 4. Sauvegarde avec le contenu Markdown COMPLET
+    try:
+        # Utiliser la méthode sauvegarder avec le contenu
+        repo = request.registry.repo_oeuvres
+        repo.sauvegarder(oeuvre, contenu_markdown=contenu_markdown)
+        
+        print(f"[API] Œuvre '{titre}' sauvegardée")
+        print(f"  - Métadonnées → metadata.json")
+        print(f"  - Contenu → data/a_moderer/{fichier_nom}")
+        
+        return {
+            "success": True,
+            "message": f"Œuvre '{titre}' soumise avec succès !",
+            "id": oeuvre.fichier_nom,
+            "titre": oeuvre.titre,
+            "auteur": oeuvre.auteur
+        }
+        
+    except Exception as e:
+        request.response.status = 500
+        return {"error": f"Erreur lors de la soumission: {str(e)}"}
+
 # cahier de recette
 
 # matrice de tracabilité

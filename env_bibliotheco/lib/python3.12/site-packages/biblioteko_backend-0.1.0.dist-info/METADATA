@@ -7,5 +7,10 @@ Requires-Dist: waitress
 Requires-Dist: gitpython
 Requires-Dist: pyramid_chameleon
 Requires-Dist: pyramid_debugtoolbar
+Requires-Dist: pdf2image
+Requires-Dist: pytesseract
+Requires-Dist: opencv-python
+Requires-Dist: Pillow
+Requires-Dist: numpy
 Dynamic: requires-dist
 Dynamic: summary
