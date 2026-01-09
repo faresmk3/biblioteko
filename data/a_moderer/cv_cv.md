@@ -1,0 +1,12 @@
+<hr style='border:1px solid #ccc; margin:40px 0;'>
+<div style='border: 1px solid #ddd; box-shadow: 2px 2px 12px rgba(0,0,0,0.1); padding: 20px; margin: 20px auto; max-width: 800px; background-color: #fafafa;'>
+<h2 style='text-align:center;'>Page 1</h2>
+<p style='line-height:1.6; font-family:Georgia, serif;'>Technical Curiosity<br>Adaptability<br><br>Time Management<br>autonomy<br>Communication<br><br>teamwork<br><br>Interests<br><br>Sport<br><br>fiching<br><br>Langues<br><br>Français<br>Advanced<br><br>Décembre 2024 Personnal Toulouse<br><br>+ _Java-based bowling game with console interface.<br><br>+ Complete business logic handling scoring and official bowling rules for an<br>interactive gameplay experience.<br>JAVA<br><br>Parking Management System - DreamPark<br><br>De septembre 2024 à décembre 2024 university of Jean Jaures Toulouse<br><br>+ Automated parking spot allocation.<br>+ Access monitoring and real-time availability display.<br>PYTHON<br><br>Automatic Timetable Management Application<br><br>De décembre 2024 à février 2025 University of Jean Jaures Toulouse<br><br>+ Automated generation of teachers' schedules based on availability, course<br>priorities, and classroom types.<br><br>+ Features: teacher account creation, timetable editing, admin interface.<br>SPRING BOOT POSTGRE SQL JAVASCRIPT<br><br>Web Development Internship<br>De mai 2024 à août 2024 IRIT Toulouse<br><br>+ Development of a ReactJS application: analysis, design, testing, and validation.<br>-_ Integration of semantic web technologies and writing of technical<br>documentation.</p>
+</div>
+
+<hr style='border:1px solid #ccc; margin:40px 0;'>
+<div style='border: 1px solid #ddd; box-shadow: 2px 2px 12px rgba(0,0,0,0.1); padding: 20px; margin: 20px auto; max-width: 800px; background-color: #fafafa;'>
+<h2 style='text-align:center;'>Page 2</h2>
+<p style='line-height:1.6; font-family:Georgia, serif;'>kaneassane81@gmail.<br>com<br><br>Lille<br>https://logibuilder.gith<br>ub.io/assane.kane<br><br>07 66 04 82 11<br><br>Soft skills<br><br>Assane KANE<br><br>Software ingeneer<br><br>Education<br><br>Software engeneering<br><br>Depuis septembre 2025 University of Lille 1 Lille<br>Software design, development, and maintainability.<br><br>MIASHS(Mathématiques Informatique Appliquées aux Sciences Humaines et<br>Sociales<br><br>De septembre 2023 à juin 2024 université toulouse 2 Jean Jaures Toulouse<br>Web development, data science, software design, and project management<br><br>Experiences<br><br>4<br><br>Rouwtlino Game - Rawlino Simulation</p>
+</div>
+
