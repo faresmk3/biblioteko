@@ -204,43 +204,75 @@ export const catalogueAPI = {
 // ============================================
 
 export const demandesAPI = {
-  // Pour les membres
+  // Pour les MEMBRES
+  
+  /**
+   * Soumettre une demande de promotion
+   * @param {string} motivation - Pourquoi devenir bibliothécaire (min 10 chars)
+   */
   soumettre: async (motivation) => {
     const response = await apiClient.post('/demandes/soumettre', { motivation });
     return response.data;
   },
 
+  /**
+   * Consulter mes demandes
+   */
   mesDemandes: async () => {
     const response = await apiClient.get('/demandes/mes-demandes');
     return response.data;
   },
 
+  /**
+   * Annuler ma demande en attente
+   * @param {string} idDemande - ID de la demande
+   */
   annuler: async (idDemande) => {
     const response = await apiClient.post(`/demandes/${idDemande}/annuler`);
     return response.data;
   },
 
-  // Pour les bibliothécaires
+  // Pour les BIBLIOTHÉCAIRES
+
+  /**
+   * Lister toutes les demandes en attente (bibliothécaires)
+   */
   listerEnAttente: async () => {
     const response = await apiClient.get('/demandes/en-attente');
     return response.data;
   },
 
+  /**
+   * Approuver une demande (bibliothécaires)
+   * @param {string} idDemande - ID de la demande
+   */
   approuver: async (idDemande) => {
     const response = await apiClient.post(`/demandes/${idDemande}/approuver`);
     return response.data;
   },
 
+  /**
+   * Refuser une demande (bibliothécaires)
+   * @param {string} idDemande - ID de la demande
+   * @param {string} motif - Raison du refus (min 5 chars)
+   */
   refuser: async (idDemande, motif) => {
     const response = await apiClient.post(`/demandes/${idDemande}/refuser`, { motif });
     return response.data;
   },
 
+  /**
+   * Historique complet (bibliothécaires)
+   * @param {number} limit - Nombre max de résultats
+   */
   historique: async (limit = 50) => {
     const response = await apiClient.get(`/demandes/historique?limit=${limit}`);
     return response.data;
   },
 
+  /**
+   * Statistiques (bibliothécaires)
+   */
   statistiques: async () => {
     const response = await apiClient.get('/demandes/statistiques');
     return response.data;

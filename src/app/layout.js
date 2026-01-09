@@ -69,13 +69,11 @@ function Navbar() {
                   </>
                 )}
                 
-                {/* Pour les bibliothécaires */}
+                {/* 🆕 Menu pour les BIBLIOTHÉCAIRES */}
                 {isBibliothecaire && (
                   <>
-                    <Nav.Link as={Link} href="/moderation">
-                      🔍 Modération
-                    </Nav.Link>
-                    <Nav.Link as={Link} href="/moderation/demandes">
+                    
+                    <Nav.Link as={Link} href="/demandes-promotion">
                       📋 Demandes de promotion
                     </Nav.Link>
                   </>
