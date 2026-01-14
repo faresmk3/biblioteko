@@ -184,7 +184,6 @@ Si tu veux, je peux te **faire une version complète du README.md** qui inclut�
 - les **dépendances**
 - et des **instructions pour contribuer / setup**  
 
-Ça donnerait un README clair et prêt à être pushé avec ton repo. Veux‑tu que je fasse ça ?
 ```
 
 ### 2. Démarrer Next.js
