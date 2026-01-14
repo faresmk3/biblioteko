@@ -1,0 +1,87 @@
+####################################
+# GLOBAL
+####################################
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+.idea/
+.vscode/
+
+####################################
+# GIT
+####################################
+.git/
+git/
+
+####################################
+# NODE / NEXT.JS (Frontend)
+####################################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.next/
+out/
+dist/
+
+.env
+.env.local
+.env.development
+.env.production
+
+####################################
+# PYTHON (Backend)
+####################################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environments
+venv/
+env/
+ENV/
+env_bibliotheco/
+
+# Python build / packaging
+*.egg-info/
+.eggs/
+build/
+dist/
+
+####################################
+# PYTEST / COVERAGE
+####################################
+.pytest_cache/
+.coverage
+htmlcov/
+
+####################################
+# PYRAMID / CONFIG
+####################################
+*.ini~
+*.cfg~
+
+####################################
+# DATABASE / DATA
+####################################
+*.sqlite3
+*.db
+
+####################################
+# DOCUMENTS (optionnel)
+####################################
+*.pdf
+*.docx
+*.odt
+
+####################################
+# OS / TEMP
+####################################
+*.bak
+*~
