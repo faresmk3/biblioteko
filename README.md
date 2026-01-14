@@ -127,7 +127,7 @@ NEXT_PUBLIC_API_URL=http://localhost:6543/api
 
 ---
 
-## 🧪 Test Complet
+## 🧪 Test 
 
 ### 1. Démarrer le backend
 
@@ -135,6 +135,56 @@ NEXT_PUBLIC_API_URL=http://localhost:6543/api
 cd bibliotheque-backend
 source env_bibliotheco/bin/activate
 pserve development.ini --reload
+```
+
+```
+# Structure du projet Bibliothèque Backend
+
+Voici la structure du dossier `src/` de l'application backend :
+
+src/
+├── app
+│ ├── api/
+│ ├── auth/
+│ │ ├── decorators.py
+│ │ └── jwt_handler.py
+│ ├── domain/
+│ │ ├── modeles.py
+│ │ └── services.py
+│ ├── infra/
+│ │ ├── crypto.py
+│ │ ├── extract_book_meta_data.py
+│ │ ├── pdf_to_md.py
+│ │ └── repositories.py
+│ ├── routes.py
+│ ├── templates/
+│ └── views/
+│ ├── api.py
+│ ├── auth.py
+│ ├── auth_views.py
+│ ├── catalogue.py
+│ ├── classification.py
+│ ├── demandes_view.py
+│ ├── emprunts.py
+│ └── multi_ia.py
+├── cli/
+│ ├── test_pdf_conversion.py
+│ └── test_workflow_moderation.py
+├── biblioteko_backend.egg-info/
+└── init.py
+
+
+> Les fichiers de cache Python (`__pycache__`) et les fichiers de backup ont été exclus pour plus de clarté.
+
+---
+
+Si tu veux, je peux te **faire une version complète du README.md** qui inclut :
+- la structure du **frontend et backend**
+- les **commandes pour lancer le projet**
+- les **dépendances**
+- et des **instructions pour contribuer / setup**  
+
+Ça donnerait un README clair et prêt à être pushé avec ton repo. Veux‑tu que je fasse ça ?
 ```
 
 ### 2. Démarrer Next.js
